@@ -1,0 +1,61 @@
+## Node affinity for particular node in which labels key is "Infra-Services" and value is "true"
+
+tolerations:
+- key: "cpuoptimised"
+  operator: "Equal"
+  value: "fast"
+  effect: "PreferNoSchedule"
+- key: "kubernetes.azure.com/scalesetpriority"
+  operator: "Equal"
+  value: "spot"
+  effect: "NoSchedule"
+
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: "kubernetes.azure.com/scalesetpriority"
+#           operator: In
+#           values:
+#           - "spot"
+
+webhook:
+   tolerations:
+   - key: "cpuoptimised"
+     operator: "Equal"
+     value: "fast"
+     effect: "PreferNoSchedule"
+   - key: "kubernetes.azure.com/scalesetpriority"
+     operator: "Equal"
+     value: "spot"
+     effect: "NoSchedule"
+#   affinity:
+#     nodeAffinity:
+#       requiredDuringSchedulingIgnoredDuringExecution:
+#         nodeSelectorTerms:
+#         - matchExpressions:
+#           - key: "Infra-Services"
+#             operator: In
+#             values:
+#             - "true"
+
+cainjector:
+   tolerations:
+   - key: "cpuoptimised"
+     operator: "Equal"
+     value: "fast"
+     effect: "PreferNoSchedule"
+   - key: "kubernetes.azure.com/scalesetpriority"
+     operator: "Equal"
+     value: "spot"
+     effect: "NoSchedule"
+#   affinity:
+#     nodeAffinity:
+#       requiredDuringSchedulingIgnoredDuringExecution:
+#         nodeSelectorTerms:
+#         - matchExpressions:
+#           - key: "Infra-Services"
+#             operator: In
+#             values:
+#             - "true"

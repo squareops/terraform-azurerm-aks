@@ -1,0 +1,22 @@
+## Set kind to DaemonSet so no affinity is assigned to it
+
+controller:
+  kind: DaemonSet
+  service:
+    externalTrafficPolicy: Cluster
+  resources:
+    limits:
+      cpu: 250m
+      memory: 500Mi
+    requests:
+      cpu: 250m 
+      memory: 500Mi
+
+## Enabling metrics for prometheus monitoring
+
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"

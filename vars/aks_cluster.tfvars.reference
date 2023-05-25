@@ -1,0 +1,103 @@
+## Please make sure that if you want your nodes into multiple availability zones then select only 
+## that region which has option of availability zones while creating resource group.
+
+## To verify that the zone you select has availability zone option or not, do the following -
+
+## 1. Select `Kubernetes services` in search option, then click on `Add Kubernetes Cluster`.
+## 2. After that select `Region` and in that you will be able to see that the region you selected
+##    has `Availability zone` option or not.
+## 3. If it has then uncomment line 42 in this file.
+
+## COMMON
+
+name                    = ""
+environment             = "test"
+resource_group_name     = ""
+resource_group_location = "East US"
+
+# NETWORK
+subnet_id    = [""]
+
+## AKS
+
+kubernetes_version              = "1.20.7"
+admin_username                  = "azureuser"
+public_ssh_key                  = "~/.ssh/id_rsa.pub"
+sku_tier                        = "Free"
+rbac_enabled                    = true
+private_cluster_enabled         = false
+enable_http_application_routing = false
+enable_kube_dashboard           = false ## Set "true" when "kubernetes_version" is below 1.19
+
+agents_pool_name      = "agentpool"
+agents_count          = 1
+agents_size           = "standard_b2ms"
+os_disk_size_gb       = 128
+agents_min_count      = 1
+agents_max_count      = 2
+enable_auto_scaling   = true
+enable_node_public_ip = false
+agents_type           = "VirtualMachineScaleSets"
+agents_max_pods       = 30
+agents_availability_zones = ["1", "2", "3"] ## Doesn't apply to region "Central India"
+
+node_pool = {
+  
+  node_pool_1 = {
+    name            = "spot1"
+    priority        = "Spot"
+    eviction_policy = "Delete"
+    spot_max_price  =  -1 
+    vm_size         = "standard_a2_v2"
+    max_count       = "11"
+    enable_auto_scaling   = true
+    min_count       = "1"
+    node_count      = "1"
+    max_pods        = "50"
+    os_disk_size_gb = "128" 
+    # node_labels = {
+    #   "app" = "nodepool1"
+    # }
+    node_taints = [
+       "cpuoptimised=fast:PreferNoSchedule"
+    ]
+    availability_zones = ["1", "2", "3"]
+  }
+  #gpu_node_pool_1 = {
+  #  name            = "gpunode"
+  #  priority        = "Regular"    # Regular or Spot
+  #  eviction_policy = "Delete"
+  #  spot_max_price  = -1
+  #  vm_size         = "Standard_NC4as_T4_v3"
+  #  max_count       = "5"
+  #  enable_auto_scaling   = true
+  #  min_count       = "0"
+  #  node_count      = "1"
+  #  max_pods        = "50"
+  #  os_disk_size_gb = "128" 
+  #  node_labels = {
+  #    "sku" = "gpu"
+  #  }
+  #  node_taints = [
+  #    "sku=gpu:NoSchedule"
+  #  ]
+  #  availability_zones = ["1", "2", "3"]
+ # }
+}
+network_plugin                 = "kubenet"         # kubenet or azure can be passed
+#network_policy                 = "calico"          # only work with kubenet
+net_profile_dns_service_ip     = "192.168.0.10"
+net_profile_docker_bridge_cidr = "172.17.0.1/16"
+net_profile_outbound_type      = "loadBalancer"
+net_profile_service_cidr       = "192.168.0.0/16"
+net_profile_pod_cidr           = "10.244.0.0/16"
+
+## CERT MANAGER
+
+cert_manager_version = "1.0.3"
+cert_manager_enabled = true
+
+## NGINX INGRESS
+
+ingress_nginx_enabled = true
+ingress_nginx_version = "3.10.1"
