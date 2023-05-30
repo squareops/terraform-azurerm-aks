@@ -11,6 +11,7 @@ provider "kubernetes" {
   client_certificate     = "${module.aks_cluster.client_certificate}"
   client_key             = "${module.aks_cluster.client_key}"
   cluster_ca_certificate = "${module.aks_cluster.cluster_ca_certificate}"
+  config_path = "~/.kube/config"
 }
 
 # Helm provider
@@ -21,5 +22,6 @@ provider "helm" {
       client_certificate     = "${module.aks_cluster.client_certificate}"
       client_key             = "${module.aks_cluster.client_key}"
       cluster_ca_certificate = "${module.aks_cluster.cluster_ca_certificate}"
+      config_path = "~/.kube/config"
   }
 }

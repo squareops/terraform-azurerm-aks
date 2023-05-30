@@ -18,10 +18,10 @@ output "default_ng_rg_name" {
   value       = "${module.aks_cluster.default_ng_rg_name}"
 }
 
-# output "nginx_ingress_controller_external_ip" {
-#   description = "NGINX Ingress Controller External IP"
-#   value       = "${module.aks_bootstrap.nginx_ingress_controller_external_ip}"
-# }
+output "nginx_ingress_controller_external_ip" {
+  description = "NGINX Ingress Controller External IP"
+  value       = "${module.aks_bootstrap.nginx_ingress_controller_external_ip}"
+}
 
 output "resource_group_name" {
   description = "Resource Group Name"

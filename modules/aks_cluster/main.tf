@@ -62,10 +62,10 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     availability_zones    = var.agents_availability_zones
     # type                  = var.agents_type
     # max_pods              = var.agents_max_pods
-    
+
     node_labels = {
-        "Infra-Services" = "true"
-     }
+      Infra-Services = "true"
+    }
 
     tags = {
       "agent_pool_name" = var.agents_pool_name

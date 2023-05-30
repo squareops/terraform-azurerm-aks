@@ -12,34 +12,7 @@ resource "kubernetes_namespace" "cert_manager" {
     name = "cert-manager"
   }
 }
-resource "kubernetes_namespace" "ingress-basic" {
-  depends_on = [null_resource.get_kubeconfig]
 
-  metadata {
-    name = "ingress-basic"
-  }
-}
-resource "kubernetes_namespace" "gpu-resources" {
-  depends_on = [null_resource.get_kubeconfig]
-
-  metadata {
-    name = "gpu-resources"
-  }
-}
-resource "kubernetes_namespace" "proxy-streamer" {
-  depends_on = [null_resource.get_kubeconfig]
-
-  metadata {
-    name = "proxy-streamer"
-  }
-}
-resource "kubernetes_namespace" "record" {
-  depends_on = [null_resource.get_kubeconfig]
-
-  metadata {
-    name = "record"
-  }
-}
 resource "kubernetes_namespace" "ingress_nginx" {
   count      = var.ingress_nginx_enabled ? 1 : 0
   depends_on = [null_resource.get_kubeconfig]
@@ -48,15 +21,10 @@ resource "kubernetes_namespace" "ingress_nginx" {
     name = "ingress-nginx"
   }
 }
-resource "null_resource" "nvidia-device-plugin-ds" {
-  depends_on = [kubernetes_namespace.gpu-resources]
-  provisioner "local-exec" {
-    command = "kubectl apply -f ../../files/nvidia-device-plugin-ds.yaml"
-  }
-}
+
 resource "null_resource" "aks_custom_storage_class" {
   depends_on = [null_resource.get_kubeconfig]
-  
+
 
   provisioner "local-exec" {
     command = "kubectl apply -f ../../files/aks-custom-storage-class.yaml"
