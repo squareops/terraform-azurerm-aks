@@ -8,8 +8,19 @@ locals {
     Department = "Engineering"
   }
   vnet_address_space     = "20.10.0.0/16"
-  vnet_subnets_prefixes  = ["20.10.1.0/24", "20.10.2.0/24", "20.10.3.0/24"]
-  vnet_subnet_names      = ["subnet-1", "subnet-2", "subnet-3"]
+  pod_cidr_block         = replace(local.vnet_address_space, "10", "244")
+  dns_service_ip         = replace(local.vnet_address_space, ".0/16", ".10")
+  docker_bridge_cidr     = replace(local.vnet_address_space, "20", "172")
+  subnet_count           = 3
+  base_subnet            = replace(local.vnet_address_space, "/16", "/24")
+  subnet_prefix          = "subnet"
+  subnets                = [for i in range(local.subnet_count) : {
+    name                 = "${local.subnet_prefix}-${i + 1}"
+    cidr                 = replace(local.base_subnet, ".0.0", ".${i + 1}.0")
+  }]
+  subnet_cidrs           = [for s in local.subnets : s.cidr]
+  subnet_names           = [for s in local.subnets : s.name]
+  network_plugin         = "kubenet"
   vpn_server_enabled     = false
 }
 
@@ -26,8 +37,8 @@ module "network" {
   resource_group_name = azurerm_resource_group.terraform_infra.name
   vnet_name           = format("%s-%s-network", local.name, local.environment)
   address_space       = local.vnet_address_space
-  subnet_prefixes     = local.vnet_subnets_prefixes
-  subnet_names        = local.vnet_subnet_names
+  subnet_prefixes     = local.subnet_cidrs
+  subnet_names        = local.subnet_names
 
   tags = local.additional_tags
 }
@@ -35,8 +46,8 @@ module "network" {
 module "security_groups_subnet_route_table_association" {
   depends_on                 = [module.network]
   source                     = "../../modules/security-groups"
-  subnet_prefixes            = local.vnet_subnets_prefixes
-  subnet_names               = local.vnet_subnet_names
+  subnet_prefixes            = local.subnet_cidrs
+  subnet_names               = local.subnet_names
   resource_group_name        = azurerm_resource_group.terraform_infra.name
   resource_group_location    = azurerm_resource_group.terraform_infra.location
   vnet_subnets               = module.network.vnet_subnets
@@ -47,25 +58,26 @@ module "kubenet_dependencies" {
 
   resource_group_name        = azurerm_resource_group.terraform_infra.name
   resource_group_location    = azurerm_resource_group.terraform_infra.location
-  network_plugin             = "kubenet"
+  network_plugin             = local.network_plugin
 }
+
 module "aks_cluster" {
   depends_on = [module.kubenet_dependencies]
   source     = "../../modules/aks_cluster"
 
   user_assigned_identity_id         = module.kubenet_dependencies.user_assigned_identity_id
   agents_count                      = "1"
-  agents_size                       = "Standard_B1ms"
-  network_plugin                    = "kubenet"
-#   net_profile_dns_service_ip        = var.net_profile_dns_service_ip
-#   net_profile_docker_bridge_cidr    = var.net_profile_docker_bridge_cidr
-#   net_profile_outbound_type         = var.net_profile_outbound_type
-#   net_profile_pod_cidr              = var.net_profile_pod_cidr
-#   net_profile_service_cidr          = var.net_profile_service_cidr
+  agents_size                       = "Standard_B2s"
+  network_plugin                    = local.network_plugin
+  net_profile_dns_service_ip        = local.dns_service_ip
+  net_profile_docker_bridge_cidr    = local.docker_bridge_cidr
+  # net_profile_outbound_type         = var.net_profile_outbound_type
+  net_profile_pod_cidr              = local.pod_cidr_block
+  net_profile_service_cidr          = local.vnet_address_space
   agents_pool_name                  = format("%spool", local.name)
-  os_disk_size_gb                   = "20"
+  os_disk_size_gb                   = "30"
 #   subnet_id                         = module.network.subnet_ids[0]
-#   enable_auto_scaling               = var.enable_auto_scaling
+#   enable_auto_scaling               = var.enable_auto_scalingdocker_bridge_cidr
   agents_min_count                  = "1"
   agents_max_count                  = "3"
   enable_node_public_ip             = "true"
@@ -79,7 +91,7 @@ module "aks_cluster" {
   resource_group_location           = azurerm_resource_group.terraform_infra.location
   environment                       = local.environment
   name                              = local.name
-  kubernetes_version                = "1.25"
+  kubernetes_version                = "1.25.6"
 #   private_cluster_enabled           = var.private_cluster_enabled
   sku_tier                          = "Free"
 #   enable_http_application_routing   = var.enable_http_application_routing
@@ -96,19 +108,19 @@ module "aks_cluster" {
 #   client_id                         = var.client_id
 #   client_secret                     = var.client_secret
 }
-# module "aks_bootstrap" {
-#   depends_on = [module.aks_cluster]
-#   source     = "./aks_bootstrap"
+module "aks_bootstrap" {
+  depends_on = [module.aks_cluster]
+  source     = "../../modules/aks_bootstrap"
 
-#   resource_group_name        = var.resource_group_name
-#   cluster_name               = module.aks_cluster.cluster_name
-#   cert_manager_enabled       = var.cert_manager_enabled
-#   cert_manager_version       = var.cert_manager_version
-#   ingress_nginx_enabled      = var.ingress_nginx_enabled
-#   ingress_nginx_version      = var.ingress_nginx_version
-#   resource_group_location    = var.resource_group_location
-#   network_plugin             = var.network_plugin
-# }
+  resource_group_name        = azurerm_resource_group.terraform_infra.name
+  cluster_name               = module.aks_cluster.cluster_name
+  cert_manager_enabled       = "true"
+  cert_manager_version       = "1.12.1"
+  ingress_nginx_enabled      = "true"
+  ingress_nginx_version      = "4.2.5"
+  resource_group_location    = azurerm_resource_group.terraform_infra.location
+  network_plugin             = local.network_plugin
+}
 module "aks_node_pool" {
   depends_on = [module.aks_cluster]
   source     = "../../modules/aks_node_pool"

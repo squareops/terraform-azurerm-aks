@@ -51,7 +51,7 @@ resource "kubernetes_namespace" "ingress_nginx" {
 resource "null_resource" "nvidia-device-plugin-ds" {
   depends_on = [kubernetes_namespace.gpu-resources]
   provisioner "local-exec" {
-    command = "kubectl apply -f ./files/nvidia-device-plugin-ds.yaml"
+    command = "kubectl apply -f ../../files/nvidia-device-plugin-ds.yaml"
   }
 }
 resource "null_resource" "aks_custom_storage_class" {
@@ -59,7 +59,7 @@ resource "null_resource" "aks_custom_storage_class" {
   
 
   provisioner "local-exec" {
-    command = "kubectl apply -f ./files/aks-custom-storage-class.yaml"
+    command = "kubectl apply -f ../../files/aks-custom-storage-class.yaml"
   }
 }
 resource "helm_release" "ingress_nginx_controller" {
@@ -78,7 +78,7 @@ resource "helm_release" "ingress_nginx_controller" {
   timeout    = 600
 
   values = [
-    file("./helm/ingress-nginx-controller/values.yaml")
+    file("../../helm/ingress-nginx-controller/values.yaml")
   ]
   lifecycle {
     create_before_destroy = true
@@ -109,7 +109,7 @@ resource "helm_release" "cert_manager" {
   timeout    = 600
 
   values = [
-    file("./helm/cert-manager/values.yaml")
+    file("../../helm/cert-manager/values.yaml")
   ]
   lifecycle {
     create_before_destroy = true
@@ -120,7 +120,7 @@ resource "null_resource" "cluster_issuer" {
   count      = var.cert_manager_enabled ? 1 : 0
 
   provisioner "local-exec" {
-    command = "kubectl apply -f ./helm/production-issuer/prod-issuer.yaml"
+    command = "kubectl apply -f ../../helm/production-issuer/prod-issuer.yaml"
   }
 }
 data "kubernetes_service" "get_ingress_nginx_controller_svc" {

@@ -74,11 +74,11 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 
   network_profile {
     network_plugin     = var.network_plugin
-    # dns_service_ip     = var.net_profile_dns_service_ip
-    # docker_bridge_cidr = var.net_profile_docker_bridge_cidr
+    dns_service_ip     = var.net_profile_dns_service_ip
+    docker_bridge_cidr = var.net_profile_docker_bridge_cidr
     # outbound_type      = var.net_profile_outbound_type
-    # pod_cidr           = var.network_plugin == "kubenet" ? var.net_profile_pod_cidr : null
-    # service_cidr       = var.net_profile_service_cidr
+    pod_cidr           = var.network_plugin == "kubenet" ? var.net_profile_pod_cidr : null
+    service_cidr       = var.net_profile_service_cidr
   }
 
   # linux_profile {

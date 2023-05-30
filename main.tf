@@ -1,12 +1,12 @@
-data "terraform_remote_state" "security_groups_subnet_route_table_association" {
-   backend = "azurerm"
-   config = {
-      resource_group_name  = "skaftest"
-      storage_account_name = "skafstorageacc"
-      container_name       = "terraformbackendtfstate"
-      key                  = "terraform-infra/vnet.tfstate"
-   }
-}
+# data "terraform_remote_state" "security_groups_subnet_route_table_association" {
+#    backend = "azurerm"
+#    config = {
+#       resource_group_name  = "skaftest"
+#       storage_account_name = "skafstorageacc"
+#       container_name       = "terraformbackendtfstate"
+#       key                  = "terraform-infra/vnet.tfstate"
+#    }
+# }
 
 module "kubenet_dependencies" {
   source     = "./kubenet_dependencies"
