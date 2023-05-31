@@ -28,7 +28,7 @@ locals {
 resource "azurerm_resource_group" "terraform_infra" {
   name     = format("%s-%s-rg", local.name, local.environment)
   location = local.region
-  tags = local.additional_tags
+  tags     = local.additional_tags
 }
 
 module "network" {
