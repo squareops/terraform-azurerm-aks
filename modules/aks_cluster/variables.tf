@@ -140,8 +140,8 @@ variable "scale_down_utilization_threshold" {
 }
 
 variable "agents_pool_name" {
-  default = ""
-  type    = string
+  default = [""]
+  type    = list(string)
 }
 
 variable "agents_count" {
@@ -160,8 +160,8 @@ variable "agents_max_count" {
 }
 
 variable "agents_size" {
-  default = ""
-  type    = string
+  default = [""]
+  type    = list(string)
 }
 
 variable "node_taints" {
