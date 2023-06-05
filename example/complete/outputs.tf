@@ -18,11 +18,6 @@ output "default_ng_rg_name" {
   value       = "${module.aks_cluster.default_ng_rg_name}"
 }
 
-# output "nginx_ingress_controller_external_ip" {
-#   description = "NGINX Ingress Controller External IP"
-#   value       = "${module.aks_bootstrap.nginx_ingress_controller_external_ip}"
-# }
-
 output "resource_group_name" {
   description = "Resource Group Name"
   value       = azurerm_resource_group.terraform_infra.name
@@ -31,13 +26,3 @@ output "resource_group_location" {
   description = "Resource Group Name Location"
   value       = azurerm_resource_group.terraform_infra.location
 }
-
-# output "kms_tenant_id" {
-#   description = "Tenant ID"
-#   value       = "${data.azuread_client_config.current.tenant_id}"
-# }
-
-# output "kms_object_id" {
-#   description = "Object ID"
-#   value       = "${data.azuread_client_config.current.object_id}"
-# }
