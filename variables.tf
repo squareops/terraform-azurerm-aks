@@ -251,26 +251,3 @@ variable "rbac_enabled" {
   default = false
   type    = bool
 }
-
-## CERT MANAGER
-
-variable "cert_manager_version" {
-  default = ""
-  type    = string
-}
-variable "cert_manager_enabled" {
-  default = false
-  type    = bool
-}
-
-## NGINX INGRESS
-
-variable "ingress_nginx_enabled" {
-  default = false
-  type    = bool
-}
-
-variable "ingress_nginx_version" {
-  default = ""
-  type    = string
-}
