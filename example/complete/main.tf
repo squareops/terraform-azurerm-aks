@@ -8,8 +8,8 @@ locals {
     Department = "Engineering"
   }
   vnet_address_space     = "20.10.0.0/16"
-  pod_cidr_block         = replace(local.vnet_address_space, "10", "244")
-  dns_service_ip         = replace(local.service_cidr, ".0/16", ".10")
+  pod_cidr_block         = replace(local.vnet_address_space, "10", "244") # for aks
+  dns_service_ip         = replace(local.service_cidr, ".0/16", ".10") 
   docker_bridge_cidr     = replace(local.vnet_address_space, "10.0", "10.100")
   service_cidr           = "192.168.0.0/16"
   subnet_count           = 2
@@ -66,7 +66,7 @@ module "kubenet_dependencies" {
 }
 
 module "aks_cluster" {
-  depends_on = [module.kubenet_dependencies, tls_private_key.key]
+  depends_on = [module.kubenet_dependencies]
   source     = "../../modules/aks_cluster"
 
   user_assigned_identity_id         = module.kubenet_dependencies.user_assigned_identity_id

@@ -79,11 +79,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     service_cidr       = var.net_profile_service_cidr
   }
 
-  # linux_profile {
-  #   username = var.admin_username
-  #   ssh_key = var.public_ssh_key
-  # }
-
+  linux_profile {
+    admin_username = var.admin_username
+    ssh_key {
+        key_data = var.public_ssh_key
+    }
+  }
   role_based_access_control {
     enabled = var.rbac_enabled
   }
