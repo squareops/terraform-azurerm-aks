@@ -39,7 +39,7 @@ module "aks_cluster" {
   agents_min_count                  = "1"
   agents_max_count                  = "3"
   enable_node_public_ip             = "true"
-  agents_availability_zones         = ["1", "2", "3"] # Does not all the zones for apply to region Central India
+  agents_availability_zones         = ["1", "2", "3"] # Cannot apply all the 3 zones for region Central India region
   rbac_enabled                      = "true"
   agents_max_pods                   = "58"
   resource_group_name               = azurerm_resource_group.terraform_infra.name
