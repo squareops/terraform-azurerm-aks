@@ -7,12 +7,12 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  vnet_address_space     = "20.10.0.0/16"
-  pod_cidr_block         = replace(local.vnet_address_space, "10", "244") # for aks
-  dns_service_ip         = replace(local.service_cidr, ".0/16", ".10") 
-  docker_bridge_cidr     = replace(local.vnet_address_space, "10.0", "10.100")
-  service_cidr           = "192.168.0.0/16"
-  subnet_count           = 2
+  vnet_address_space     = "20.10.0.0/16" # Do not change the last three octets ex: .10.0.0/16
+  pod_cidr_block         = replace(local.vnet_address_space, ".0.", ".244.") # for aks pods cidr
+  dns_service_ip         = replace(local.service_cidr, ".0/16", ".10") # IP address within the Kubernetes service address range that will be used by cluster service discovery. Don't use the first IP address in your address range. The first address in your subnet range is used for the kubernetes.default.svc.cluster.local address.
+  docker_bridge_cidr     = replace(local.vnet_address_space, "10.0", "10.100") # It's required to select a CIDR for the Docker bridge network address because otherwise Docker will pick a subnet automatically, which could conflict with other CIDRs. You must pick an address space that doesn't collide with the rest of the CIDRs on your networks, including the cluster's service CIDR and pod CIDR. Default of 172.17.0.1/16. 
+  service_cidr           = "192.168.0.0/16" # This range shouldn't be used by any network element on or connected to this virtual network. Service address CIDR must be smaller than /12. You can reuse this range across different AKS clusters.
+  subnet_count           = 1
   base_subnet            = replace(local.vnet_address_space, "/16", "/24")
   subnet_prefix          = "subnet"
   subnets                = [for i in range(local.subnet_count) : {
