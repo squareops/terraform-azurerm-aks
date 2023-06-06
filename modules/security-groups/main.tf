@@ -65,8 +65,3 @@ resource "azurerm_subnet_route_table_association" "subnet_rt_association" {
   route_table_id = element(azurerm_route_table.subnet_rt.*.id, count.index)
   subnet_id      = element(var.vnet_subnets, count.index)
 }
-
-output "subnet_id" {
-  description = "Subnet ID"
-  value       = azurerm_subnet_network_security_group_association.subnet_network_sg_association.*.id 
-}

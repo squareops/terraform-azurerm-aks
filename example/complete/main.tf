@@ -7,11 +7,7 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  vnet_address_space     = "20.10.0.0/16" # Do not change the last three octets ex: .10.0.0/16
-  pod_cidr_block         = replace(local.vnet_address_space, ".0.", ".244.") # for aks pods cidr
-  dns_service_ip         = replace(local.service_cidr, ".0/16", ".10") # IP address within the Kubernetes service address range that will be used by cluster service discovery. Don't use the first IP address in your address range. The first address in your subnet range is used for the kubernetes.default.svc.cluster.local address.
-  docker_bridge_cidr     = replace(local.vnet_address_space, "10.0", "10.100") # It's required to select a CIDR for the Docker bridge network address because otherwise Docker will pick a subnet automatically, which could conflict with other CIDRs. You must pick an address space that doesn't collide with the rest of the CIDRs on your networks, including the cluster's service CIDR and pod CIDR. Default of 172.17.0.1/16. 
-  service_cidr           = "192.168.0.0/16" # This range shouldn't be used by any network element on or connected to this virtual network. Service address CIDR must be smaller than /12. You can reuse this range across different AKS clusters.
+  vnet_address_space     = "20.10.0.0/16" # Do not modify last two octets i.e ".0.0/16" 
   subnet_count           = 1
   base_subnet            = replace(local.vnet_address_space, "/16", "/24")
   subnet_prefix          = "subnet"
@@ -26,9 +22,9 @@ locals {
 }
 
 resource "azurerm_resource_group" "terraform_infra" {
-  name     = format("%s-%s-rg", local.name, local.environment)
-  location = local.region
-  tags     = local.additional_tags
+  name            = format("%s-%s-rg", local.name, local.environment)
+  location        = local.region
+  tags            = local.additional_tags
 }
 
 module "network" {
@@ -40,7 +36,7 @@ module "network" {
   address_space       = local.vnet_address_space
   subnet_prefixes     = local.subnet_cidrs
   subnet_names        = local.subnet_names
-  tags = local.additional_tags
+  tags                = local.additional_tags
 }
 
 module "security_groups_subnet_route_table_association" {
@@ -73,17 +69,17 @@ module "aks_cluster" {
   agents_count                      = "1" # per node pool
   agents_size                       = ["Standard_B2s", "Standard_DS2_v2"]  # node pool vm sizes
   network_plugin                    = local.network_plugin
-  net_profile_dns_service_ip        = local.dns_service_ip
-  net_profile_docker_bridge_cidr    = local.docker_bridge_cidr
-  net_profile_pod_cidr              = local.pod_cidr_block
-  net_profile_service_cidr          = local.service_cidr
+  net_profile_dns_service_ip        = "192.168.0.10" # IP address within the Kubernetes service address range that will be used by cluster service discovery. Don't use the first IP address in your address range. The first address in your subnet range is used for the kubernetes.default.svc.cluster.local address.
+  net_profile_docker_bridge_cidr    = "172.17.0.1/16" # It's required to select a CIDR for the Docker bridge network address because otherwise Docker will pick a subnet automatically, which could conflict with other CIDRs. You must pick an address space that doesn't collide with the rest of the CIDRs on your networks, including the cluster's service CIDR and pod CIDR. Default of 172.17.0.1/16. 
+  net_profile_pod_cidr              = "10.244.0.0/16" # for aks pods cidr
+  net_profile_service_cidr          = "192.168.0.0/16" # This range shouldn't be used by any network element on or connected to this virtual network. Service address CIDR must be smaller than /12. You can reuse this range across different AKS clusters.
   agents_pool_name                  = [format("%sinfra", local.name), format("%sapp", local.name)]
   os_disk_size_gb                   = "30"
   enable_auto_scaling               = "true"
   agents_min_count                  = "1"
   agents_max_count                  = "3"
   enable_node_public_ip             = "true"
-  agents_availability_zones         = ["1", "2", "3"] # Doesnt apply to region Central India
+  agents_availability_zones         = ["1", "2", "3"] # Does not all the zones for apply to region Central India
   rbac_enabled                      = "true"
   agents_max_pods                   = "58"
   resource_group_name               = azurerm_resource_group.terraform_infra.name
