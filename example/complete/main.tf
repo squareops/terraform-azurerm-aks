@@ -78,8 +78,8 @@ module "aks_cluster" {
   enable_auto_scaling               = "true"
   agents_min_count                  = "1"
   agents_max_count                  = "3"
-  enable_node_public_ip             = "false"
-  agents_availability_zones         = ["1", "2", "3"] # Applies to regions except Central India
+  enable_node_public_ip             = "false" # If we want to create public nodes set this value "true"
+  agents_availability_zones         = ["1", "2", "3"] # Applies to all the regions except Central India
   rbac_enabled                      = "true"
   agents_max_pods                   = "58"
   resource_group_name               = azurerm_resource_group.terraform_infra.name
