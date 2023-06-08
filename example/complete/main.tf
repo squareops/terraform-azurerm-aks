@@ -7,7 +7,7 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  vnet_address_space     = "20.10.0.0/16" # Do not modify last two octets i.e ".0.0/16" 
+  vnet_address_space     = "20.10.0.0/16" # Do not modify last two octets i.e ".0.0/16"
   subnet_count           = 1
   base_subnet            = replace(local.vnet_address_space, "/16", "/24")
   subnet_prefix          = "subnet"
@@ -89,13 +89,11 @@ module "aks_cluster" {
   kubernetes_version                = local.k8s_version
   private_cluster_enabled           = "false"  # Cluster endpoint
   sku_tier                          = "Free"
-  enable_http_application_routing   = "false" # The HTTP application routing add-on doesn't work with AKS versions 1.22.6+.
   subnet_id                         = module.security_groups_subnet_route_table_association.subnet_id
   admin_username                    = "azureuser"  # node pool username
   public_ssh_key                    = tls_private_key.key.public_key_openssh
   agents_type                       = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
   net_profile_outbound_type         = "loadBalancer"
-  enable_kube_dashboard             = "false" # Set "true" when "kubernetes_version" is below 1.19
 }
 
 module "aks_node_pool" {
