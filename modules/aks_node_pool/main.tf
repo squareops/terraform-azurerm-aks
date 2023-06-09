@@ -3,7 +3,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_node_pool" {
   name                  = lookup(each.value, "name", null)
   kubernetes_cluster_id = var.kubernetes_cluster_id
   vm_size               = lookup(each.value, "vm_size", null)
-  availability_zones    = lookup(each.value, "availability_zones", null)
+  zones                 = lookup(each.value, "availability_zones", null)
   enable_auto_scaling   = var.enable_auto_scaling
   max_count             = lookup(each.value, "max_count", null)
   min_count             = lookup(each.value, "min_count", null)

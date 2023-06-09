@@ -94,6 +94,11 @@ module "aks_cluster" {
   public_ssh_key                    = tls_private_key.key.public_key_openssh
   agents_type                       = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
   net_profile_outbound_type         = "loadBalancer"
+  log_analytics_workspace_sku       = "PerGB2018" # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
+  enable_log_analytics_solution     = "true" # Log analytics solutions are typically software solutions with data visualization and insights tools.
+  enable_control_plane_logs_scrape  = "true" # Scrapes logs of the aks control plane
+  control_plane_monitor_name        = format("%s-%s-aks-control-plane-logs-monitor", local.name, local.environment) # Control plane logs monitoring such as "kube-apiserver", "cloud-controller-manager", "kube-scheduler"
+  additional_tags                   = local.additional_tags
 }
 
 module "aks_node_pool" {
