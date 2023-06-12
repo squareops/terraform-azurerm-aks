@@ -339,3 +339,9 @@ variable "additional_tags" {
   default = {}
   type    = any
 }
+
+variable "principal_id" {
+  description = "AKS identity principal ID"
+  default = ""
+  type    = string
+}

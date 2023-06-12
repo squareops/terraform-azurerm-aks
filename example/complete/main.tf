@@ -8,16 +8,7 @@ locals {
     Department = "Engineering"
   }
   vnet_address_space     = "20.10.0.0/16" # Do not modify last two octets i.e ".0.0/16"
-  subnet_count           = 1
-  base_subnet            = replace(local.vnet_address_space, "/16", "/24")
-  subnet_prefix          = "subnet"
-  subnets                = [for i in range(local.subnet_count) : {
-    name                 = "${local.subnet_prefix}-${i + 1}"
-    cidr                 = replace(local.base_subnet, ".0.0", ".${i + 1}.0")
-  }]
-  subnet_cidrs           = [for s in local.subnets : s.cidr]
-  subnet_names           = [for s in local.subnets : s.name]
-  network_plugin         = "kubenet"  #CNI
+  network_plugin         = "azure"  # You can choose "kubenet" or "azure"
   k8s_version            = "1.26.3"
 }
 
@@ -27,45 +18,37 @@ resource "azurerm_resource_group" "terraform_infra" {
   tags            = local.additional_tags
 }
 
-module "network" {
-  depends_on          = [azurerm_resource_group.terraform_infra]
-  source              = "Azure/network/azurerm"
-  version             = "3.3.0"
-  resource_group_name = azurerm_resource_group.terraform_infra.name
-  vnet_name           = format("%s-%s-network", local.name, local.environment)
-  address_space       = local.vnet_address_space
-  subnet_prefixes     = local.subnet_cidrs
-  subnet_names        = local.subnet_names
-  tags                = local.additional_tags
-}
-
-module "security_groups_subnet_route_table_association" {
-  depends_on                 = [module.network]
-  source                     = "../../modules/security-groups"
-  subnet_prefixes            = local.subnet_cidrs
-  subnet_names               = local.subnet_names
-  resource_group_name        = azurerm_resource_group.terraform_infra.name
-  resource_group_location    = azurerm_resource_group.terraform_infra.location
-  vnet_subnets               = module.network.vnet_subnets
+module "vnet" {
+  source                  = "../../modules/vnet"
+  depends_on              = [azurerm_resource_group.terraform_infra]
+  name                    = local.name
+  address_space           = local.vnet_address_space
+  environment             = local.environment
+  resource_group_name     = azurerm_resource_group.terraform_infra.name
+  resource_group_location = azurerm_resource_group.terraform_infra.location
+  zones                   = 2
+  create_public_subnets   = true
+  create_private_subnets  = true
+  create_database_subnets = false
+  additional_tags         = local.additional_tags
 }
 
 resource "tls_private_key" "key" {
   algorithm = "RSA"
 }
 
-module "kubenet_dependencies" {
-  source     = "../../modules/kubenet_dependencies"
-
-  resource_group_name        = azurerm_resource_group.terraform_infra.name
-  resource_group_location    = azurerm_resource_group.terraform_infra.location
-  network_plugin             = local.network_plugin
+resource "azurerm_user_assigned_identity" "identity" {
+  name                = "aksidentity"
+  resource_group_name = azurerm_resource_group.terraform_infra.name
+  location            = azurerm_resource_group.terraform_infra.location
 }
 
 module "aks_cluster" {
-  depends_on = [module.kubenet_dependencies]
+ depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
   source     = "../../modules/aks_cluster"
 
-  user_assigned_identity_id         = module.kubenet_dependencies.user_assigned_identity_id
+  user_assigned_identity_id         = azurerm_user_assigned_identity.identity.id
+  principal_id                      = azurerm_user_assigned_identity.identity.principal_id
   agents_count                      = "1" # per node pool
   agents_size                       = ["Standard_B2s", "Standard_DS2_v2"]  # node pool vm sizes
   network_plugin                    = local.network_plugin
@@ -89,7 +72,7 @@ module "aks_cluster" {
   kubernetes_version                = local.k8s_version
   private_cluster_enabled           = "false"  # Cluster endpoint
   sku_tier                          = "Free"
-  subnet_id                         = module.security_groups_subnet_route_table_association.subnet_id
+  subnet_id                         = module.vnet.vnet_subnets
   admin_username                    = "azureuser"  # node pool username
   public_ssh_key                    = tls_private_key.key.public_key_openssh
   agents_type                       = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
@@ -110,5 +93,5 @@ module "aks_node_pool" {
   enable_auto_scaling        = "true"
   enable_node_public_ip      = "false" # If we want to create public nodes set this value "true"
   kubernetes_version         = local.k8s_version
-  subnet_id                  = module.security_groups_subnet_route_table_association.subnet_id
+  subnet_id                  = module.vnet.vnet_subnets
 }

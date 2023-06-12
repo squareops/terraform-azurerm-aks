@@ -1,5 +1,12 @@
-resource "azurerm_kubernetes_cluster" "aks_cluster" {
+data "azurerm_subscription" "primary" {}
 
+resource "azurerm_role_assignment" "network_contributor" {
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Network Contributor"
+  principal_id         = var.principal_id
+}
+
+resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                              = format("%s-%s", var.environment, var.name)
   location                          = var.resource_group_location
   resource_group_name               = var.resource_group_name
@@ -88,7 +95,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool"  {
     name                  = var.agents_pool_name[1]
     node_count            = var.agents_count
     vm_size               = var.agents_size[1]
-    vnet_subnet_id        = var.subnet_id[0]
+    vnet_subnet_id        = var.subnet_id[1]
     enable_auto_scaling   = var.enable_auto_scaling
     min_count             = var.enable_auto_scaling ? var.agents_min_count : null
     max_count             = var.enable_auto_scaling ? var.agents_max_count : null
