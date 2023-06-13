@@ -7,9 +7,9 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  vnet_address_space     = "20.10.0.0/16" # Do not modify last two octets i.e ".0.0/16"
-  network_plugin         = "azure"  # You can choose "kubenet" or "azure"
-  k8s_version            = "1.26.3"
+  vnet_address_space     = "20.10.0.0/16"
+  network_plugin         = "kubenet"  # You can choose "kubenet(basic)" or "azure(advanced)" refer https://learn.microsoft.com/en-us/azure/aks/concepts-network#kubenet-basic-networking 
+  k8s_version            = "1.26.3"   # Kubernetes cluster version
 }
 
 resource "azurerm_resource_group" "terraform_infra" {
@@ -29,14 +29,16 @@ module "vnet" {
   zones                   = 2
   create_public_subnets   = true
   create_private_subnets  = true
-  create_database_subnets = false
+  create_database_subnets = false   # set true if you want to create additional database subnets. Also uncomment "database_subnets" output in vnet outputs.tf
   additional_tags         = local.additional_tags
 }
 
+# SSH private key for aks node pools.
 resource "tls_private_key" "key" {
   algorithm = "RSA"
 }
 
+# There are two types of managed idetities "System assigned" & "UserAssigned". User-assigned managed identities can be used on multiple resources.
 resource "azurerm_user_assigned_identity" "identity" {
   name                = "aksidentity"
   resource_group_name = azurerm_resource_group.terraform_infra.name

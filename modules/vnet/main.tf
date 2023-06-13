@@ -94,6 +94,38 @@ module "network_security_group" {
   resource_group_name   = var.resource_group_name
   security_group_name   = format("%s-%s-nsg", var.environment, var.name)
   source_address_prefix = [var.address_space]
+  predefined_rules      = [
+   {
+    name      = "HTTP"
+    priority  = "100"
+   },
+   {
+    name      = "HTTPS"
+    priority  = "101"
+   }
+  ]
+  # custom_rules          = [
+  # {
+  #   name                       = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-inbound")
+  #   priority                   = 1000
+  #   direction                  = "Inbound"
+  #   access                     = "Allow"
+  #   protocol                   = "*"
+  #   source_port_range          = "*"
+  #   destination_port_range     = "*"
+  #   source_address_prefixes    = concat(local.public_subnets, local.private_subnets, local.database_subnets)
+  # },
+  # {
+  #   name                       = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-outbound")
+  #   priority                   = 1001
+  #   direction                  = "Outbound"
+  #   access                     = "Allow"
+  #   protocol                   = "*"
+  #   source_port_range          = "*"
+  #   destination_port_range     = "*"
+  #   source_address_prefixes    = concat(local.public_subnets, local.private_subnets, local.database_subnets)
+  # },
+  # ]
   tags                  = local.additional_tags
 }
 
