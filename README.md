@@ -97,7 +97,7 @@ module "aks_node_pool" {
 Refer [example](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1) for more details.
 
 ## Permissions
-The required IAM permissions to create resources from this module can be found [here](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1/roles.md)
+The required permissions to create resources from this module can be found [here](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1/roles.md)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

@@ -103,7 +103,7 @@ module "network_security_group" {
     access                     = "Allow"
     protocol                   = "*"
     source_port_range          = "*"
-    destination_port_range     = "80,443"
+    destination_port_range     = "22,80,443"
     source_address_prefix      = "*"
   },
   {
