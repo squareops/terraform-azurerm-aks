@@ -14,18 +14,24 @@ This module is ideal for users who want to quickly deploy an AKS cluster on Azur
 
 ```hcl
 module "vnet" {
-  source                  = "squareops/vnet/azure"
-  depends_on              = [azurerm_resource_group.terraform_infra]
-  name                    = local.name
-  address_space           = local.vnet_address_space
-  environment             = local.environment
-  resource_group_name     = azurerm_resource_group.terraform_infra.name
-  resource_group_location = azurerm_resource_group.terraform_infra.location
-  zones                   = 2
-  create_public_subnets   = true
-  create_private_subnets  = true
-  create_database_subnets = false   # set true if you want to create additional database subnets. Also uncomment "database_subnets" output in vnet outputs.tf
-  additional_tags         = local.additional_tags
+  depends_on                    = [azurerm_resource_group.terraform_infra]
+  source                        = "../../modules/vnet"
+  name                          = local.name
+  address_space                 = local.address_space
+  environment                   = local.environment
+  zones                         = 2
+  create_public_subnets         = true
+  create_private_subnets        = true
+  create_database_subnets       = false
+  create_resource_group         = false
+  existing_resource_group_name  = azurerm_resource_group.terraform_infra.name
+  resource_group_location       = local.region
+  create_vpn                    = false
+  create_nat_gateway            = true
+  enable_logging                = false
+  additional_tags               = local.additional_tags
+}
+ditional_tags         = local.additional_tags
 }
 
 # SSH private key for aks node pools.
@@ -42,7 +48,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
  depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "../../modules/aks_cluster"
+  source     = "squareops/aks/azure"
 
   user_assigned_identity_id         = azurerm_user_assigned_identity.identity.id
   principal_id                      = azurerm_user_assigned_identity.identity.principal_id
@@ -83,7 +89,7 @@ module "aks_cluster" {
 
 module "aks_node_pool" {
   depends_on = [module.aks_cluster]
-  source     = "../../modules/aks_node_pool"
+  source     = "squareops/aks/azure//modules/aks_node_pool"
 
   node_pool                  = {}
   kubernetes_cluster_id      = module.aks_cluster.kubernetes_cluster_id
