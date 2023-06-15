@@ -31,8 +31,6 @@ module "vnet" {
   enable_logging                = false
   additional_tags               = local.additional_tags
 }
-ditional_tags         = local.additional_tags
-}
 
 # SSH private key for aks node pools.
 resource "tls_private_key" "key" {
