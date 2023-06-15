@@ -15,7 +15,7 @@ This module is ideal for users who want to quickly deploy an AKS cluster on Azur
 ```hcl
 module "vnet" {
   depends_on                    = [azurerm_resource_group.terraform_infra]
-  source                        = "../../modules/vnet"
+  source                        = "squareops/vnet/azure"
   name                          = local.name
   address_space                 = local.address_space
   environment                   = local.environment
