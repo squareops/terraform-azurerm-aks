@@ -84,7 +84,30 @@ module "network_security_group" {
   security_group_name   = format("%s-%s-nsg", var.environment, var.name)
   source_address_prefix = [var.address_space]
   tags                  = local.additional_tags
-  custom_rules          = local.custom_rules
+  custom_rules          = [
+    {
+      name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-inbound")
+      priority                     = 1000
+      direction                    = "Inbound"
+      access                       = "Allow"
+      protocol                     = "Tcp"
+      source_port_range            = "*"
+      destination_port_range       = "80,443,30000-32727"
+      destination_address_prefixes = local.public_subnets
+      source_address_prefix        = var.address_space
+    },
+    {
+      name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-outbound")
+      priority                     = 1002
+      direction                    = "Outbound"
+      access                       = "Allow"
+      protocol                     = "*"
+      source_port_range            = "*"
+      destination_port_range       = "*"
+      destination_address_prefix   = "0.0.0.0/0"
+      source_address_prefix        = "0.0.0.0/0"
+    }
+  ]
 }
 
 module "nat_gateway" {

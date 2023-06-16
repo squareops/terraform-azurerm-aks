@@ -72,6 +72,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     outbound_type      = var.net_profile_outbound_type
     pod_cidr           = var.network_plugin == "kubenet" ? var.net_profile_pod_cidr : null
     service_cidr       = var.net_profile_service_cidr
+    network_policy     = var.network_plugin == "kubenet" ? "calico" : var.network_plugin == "azure" ? "azure" : null
   }
 
   linux_profile {
@@ -163,7 +164,7 @@ resource "azurerm_monitor_diagnostic_setting" "control_plane" {
 
   log {
     category = "cluster-autoscaler"
-    enabled  = true 
+    enabled  = true
     retention_policy {
       enabled = true
       days    = 7

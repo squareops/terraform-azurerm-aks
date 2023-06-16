@@ -8,7 +8,7 @@ locals {
     Department = "Engineering"
   }
   address_space          = "20.10.0.0/16"
-  network_plugin         = "kubenet"    # You can choose "kubenet(basic)" or "azure(advanced)" refer https://learn.microsoft.com/en-us/azure/aks/concepts-network#kubenet-basic-networking 
+  network_plugin         = "azure"    # You can choose "kubenet(basic)" or "azure(advanced)" refer https://learn.microsoft.com/en-us/azure/aks/concepts-network#kubenet-basic-networking 
   k8s_version            = "1.26.3"   # Kubernetes cluster version
 }
 

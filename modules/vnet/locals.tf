@@ -20,17 +20,28 @@ locals {
       "Environment" = var.environment
     }
   )
-  custom_rules = var.create_network_security_group ? length(var.custom_nsg_rules) > 0 ? (var.custom_nsg_rules) : [
-    {
-      name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-inbound")
-      priority                     = 1000
-      direction                    = "Inbound"
-      access                       = "Allow"
-      protocol                     = "*"
-      source_port_range            = "*"
-      destination_port_range       = "80,443"
-      destination_address_prefixes = local.public_subnets
-      source_address_prefix        = "*"
-    }
+  custom_rules = var.create_network_security_group ? length(var.custom_nsg_rules) > 0 ? var.custom_nsg_rules : [
+    # {
+    #   name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-inbound")
+    #   priority                     = 100
+    #   direction                    = "Inbound"
+    #   access                       = "Allow"
+    #   protocol                     = "*"
+    #   source_port_range            = "*"
+    #   destination_port_range       = "*"
+    #   destination_address_prefixes = local.public_subnets
+    #   source_address_prefixes      = local.public_subnets
+    # },
+    # {
+    #   name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-outbound")
+    #   priority                     = 102
+    #   direction                    = "Outbound"
+    #   access                       = "Allow"
+    #   protocol                     = "*"
+    #   source_port_range            = "*"
+    #   destination_port_range       = "*"
+    #   destination_address_prefix   = "0.0.0.0/0"
+    #   source_address_prefix        = "0.0.0.0/0"
+    # },
   ] : []
 }
