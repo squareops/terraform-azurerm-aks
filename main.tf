@@ -15,6 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   private_cluster_enabled           = var.private_cluster_enabled
   sku_tier                          = var.sku_tier
   role_based_access_control_enabled = var.rbac_enabled
+  oidc_issuer_enabled               = var.oidc_issuer
 
   auto_scaler_profile {
     balance_similar_node_groups      = var.balance_similar_node_groups
@@ -55,10 +56,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     zones                 = var.agents_availability_zones
     type                  = var.agents_type
     max_pods              = var.agents_max_pods
-
-    node_labels = {
-      Infra-Services = "true"
-    }
+    node_labels           = var.node_labels_infra
 
     tags = {
       "agent_pool_name" = var.agents_pool_name[0]
@@ -68,8 +66,8 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   network_profile {
     network_plugin     = var.network_plugin
     dns_service_ip     = var.net_profile_dns_service_ip
-    docker_bridge_cidr = var.net_profile_docker_bridge_cidr
     outbound_type      = var.net_profile_outbound_type
+    docker_bridge_cidr = var.net_profile_docker_bridge_cidr
     pod_cidr           = var.network_plugin == "kubenet" ? var.net_profile_pod_cidr : null
     service_cidr       = var.net_profile_service_cidr
     network_policy     = var.network_plugin == "kubenet" ? "calico" : var.network_plugin == "azure" ? "azure" : null
@@ -104,9 +102,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool"  {
     kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
     zones                 = var.agents_availability_zones
     max_pods              = var.agents_max_pods
-    node_labels = {
-      App-Services = "true"
-    }
+    node_labels           = var.node_labels_app
     tags = {
       "agent_pool_name" = var.agents_pool_name[1]
     }

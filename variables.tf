@@ -128,6 +128,12 @@ variable "balance_similar_node_groups" {
   description = "Indicates whether to balance similar node groups."
 }
 
+variable "oidc_issuer" {
+  default = true
+  type    = bool
+  description = "Indicates whether to oidc issuer is enabled."
+}
+
 variable "max_graceful_termination_sec" {
   default = 600
   type    = number
@@ -344,4 +350,16 @@ variable "principal_id" {
   description = "AKS identity principal ID"
   default = ""
   type    = string
+}
+
+variable "node_labels_app" {
+  description = "The node labels to be attached to be attached to the aks app node pool"
+  type        = map(string)
+  default     = {}
+}
+
+variable "node_labels_infra" {
+  description = "The node labels to be attached to be attached to the aks infra node pool"
+  type        = map(string)
+  default     = {}
 }

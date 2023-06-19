@@ -26,7 +26,6 @@ module "vnet" {
   )
   nsg_ids = merge(
     (var.create_public_subnets ? (length(local.subnet_names_public) > 0 ? { for subnet_name in local.subnet_names_public : subnet_name => "${module.network_security_group[0].network_security_group_id}" } : null) : null),
-    (var.create_private_subnets ? (length(local.subnet_names_private) > 0 ? { for subnet_name in local.subnet_names_private : subnet_name => "${module.network_security_group[0].network_security_group_id}" } : null) : null),
     (var.create_database_subnets ? (length(local.subnet_names_database) > 0 ? { for subnet_name in local.subnet_names_database : subnet_name => "${module.network_security_group[0].network_security_group_id}" } : null) : null)
   )
   tags = local.additional_tags
@@ -76,38 +75,15 @@ module "routetable_database" {
 }
 
 module "network_security_group" {
-  count                 = var.create_network_security_group ? 1 : 0
-  depends_on            = [module.resource-group]
-  source                = "Azure/network-security-group/azurerm"
-  version               = "4.1.0"
-  resource_group_name   = var.create_resource_group == false ? var.existing_resource_group_name : module.resource-group[0].resource_group_name
-  security_group_name   = format("%s-%s-nsg", var.environment, var.name)
-  source_address_prefix = [var.address_space]
-  tags                  = local.additional_tags
-  custom_rules          = [
-    {
-      name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-inbound")
-      priority                     = 1000
-      direction                    = "Inbound"
-      access                       = "Allow"
-      protocol                     = "Tcp"
-      source_port_range            = "*"
-      destination_port_range       = "80,443,30000-32727"
-      destination_address_prefixes = local.public_subnets
-      source_address_prefix        = var.address_space
-    },
-    {
-      name                         = format("%s-%s-%s", var.name, var.environment, "network-sg-rule-outbound")
-      priority                     = 1002
-      direction                    = "Outbound"
-      access                       = "Allow"
-      protocol                     = "*"
-      source_port_range            = "*"
-      destination_port_range       = "*"
-      destination_address_prefix   = "0.0.0.0/0"
-      source_address_prefix        = "0.0.0.0/0"
-    }
-  ]
+  count                   = var.create_network_security_group ? 1 : 0
+  depends_on              = [module.resource-group]
+  source                  = "Azure/network-security-group/azurerm"
+  version                 = "4.1.0"
+  resource_group_name     = var.create_resource_group == false ? var.existing_resource_group_name : module.resource-group[0].resource_group_name
+  security_group_name     = format("%s-%s-nsg", var.environment, var.name)
+  source_address_prefixes = local.public_subnets
+  tags                    = local.additional_tags
+  custom_rules            = local.custom_rules
 }
 
 module "nat_gateway" {
