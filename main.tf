@@ -1,3 +1,11 @@
+module "resource-group" {
+  source                  = "./modules/resource-group"
+  count                   = var.create_resource_group ? 1 : 0
+  resource_group_name     = format("%s-%s-aks-resource-group", var.environment, var.name)
+  resource_group_location = var.resource_group_location
+  tags                    = var.tags
+}
+
 data "azurerm_subscription" "primary" {}
 
 resource "azurerm_role_assignment" "network_contributor" {
@@ -9,7 +17,7 @@ resource "azurerm_role_assignment" "network_contributor" {
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                              = format("%s-%s", var.environment, var.name)
   location                          = var.resource_group_location
-  resource_group_name               = var.resource_group_name
+  resource_group_name               = var.create_resource_group == false ? var.existing_resource_group_name : module.resource-group[0].resource_group_name
   dns_prefix                        = format("%s-%s", var.environment, var.name)
   kubernetes_version                = var.kubernetes_version
   private_cluster_enabled           = var.private_cluster_enabled
@@ -116,7 +124,7 @@ resource "azurerm_log_analytics_workspace" "logs" {
   # The WorkSpace name has to be unique across the whole of azure, not just the current subscription/tenant.
   name                = "${azurerm_kubernetes_cluster.aks_cluster.name}-${random_id.log_analytics_workspace_name_suffix.dec}"
   location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.create_resource_group == false ? var.existing_resource_group_name : module.resource-group[0].resource_group_name
   sku                 = var.log_analytics_workspace_sku
   tags                = var.additional_tags
 }
@@ -125,7 +133,7 @@ resource "azurerm_log_analytics_solution" "logs" {
   count                 = var.enable_log_analytics_solution ? 1 : 0
   solution_name         = "ContainerInsights"
   location              = var.resource_group_location
-  resource_group_name   = var.resource_group_name
+  resource_group_name   = var.create_resource_group == false ? var.existing_resource_group_name : module.resource-group[0].resource_group_name
   workspace_resource_id = azurerm_log_analytics_workspace.logs.id
   workspace_name        = azurerm_log_analytics_workspace.logs.name
 
