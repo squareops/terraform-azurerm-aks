@@ -72,7 +72,8 @@ module "aks_cluster" {
   rbac_enabled                      = "true"
   oidc_issuer                       = "true"
   agents_max_pods                   = "58"
-  resource_group_name               = azurerm_resource_group.terraform_infra.name
+  create_resource_group             = false  # Enable if you want to a create resource group for AKS cluster.
+  existing_resource_group_name      = azurerm_resource_group.terraform_infra.name
   resource_group_location           = azurerm_resource_group.terraform_infra.location
   environment                       = local.environment
   name                              = format("%s-aks", local.name)
@@ -91,6 +92,7 @@ module "aks_cluster" {
   additional_tags                   = local.additional_tags
   node_labels_app                   = { App-Services = "true" }
   node_labels_infra                 = { Infra-Services = "true" }
+  tags                              = local.additional_tags
 }
 
 module "aks_node_pool" {

@@ -52,6 +52,28 @@ variable "resource_group_location" {
   description = "The location of the Azure resource group."
 }
 
+variable "create_resource_group" {
+  description = "To create a new resource group. Value in existing_resource_group will be ignored if this is true."
+  type        = bool
+  default     = true
+}
+
+variable "existing_resource_group_name" {
+  description = "Name of existing resource group that has to be used. Leave empty if new resource group has to be created."
+  type        = string
+  default     = ""
+}
+
+variable "tags" {
+  description = "The tags to associate with your network and subnets and aks resources."
+  type        = map(string)
+
+  default = {
+    tag1 = ""
+    tag2 = ""
+  }
+}
+
 variable "kubernetes_cluster_id" {
   default = ""
   type    = string
