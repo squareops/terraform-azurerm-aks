@@ -78,13 +78,13 @@ module "aks_cluster" {
   environment                       = local.environment
   name                              = format("%s-aks", local.name)
   kubernetes_version                = local.k8s_version
-  private_cluster_enabled           = "false"  # Cluster endpoint
+  private_cluster_enabled           = "false"  # Cluster endpoint access
   sku_tier                          = "Free"
   subnet_id                         = module.vnet.private_subnets
   admin_username                    = "azureuser"  # node pool username
   public_ssh_key                    = tls_private_key.key.public_key_openssh
   agents_type                       = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
-  net_profile_outbound_type         = "loadBalancer"
+  net_profile_outbound_type         = "loadBalancer"   # The outbound (egress) routing method which should be used for this Kubernetes Cluster. Possible values are loadBalancer and userDefinedRouting. Defaults to loadBalancer.
   log_analytics_workspace_sku       = "PerGB2018" # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
   enable_log_analytics_solution     = "true" # Log analytics solutions are typically software solutions with data visualization and insights tools.
   enable_control_plane_logs_scrape  = "true" # Scrapes logs of the aks control plane
@@ -92,7 +92,6 @@ module "aks_cluster" {
   additional_tags                   = local.additional_tags
   node_labels_app                   = { App-Services = "true" }
   node_labels_infra                 = { Infra-Services = "true" }
-  tags                              = local.additional_tags
 }
 
 module "aks_node_pool" {
