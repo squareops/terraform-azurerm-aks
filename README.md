@@ -13,17 +13,34 @@ This module is ideal for users who want to quickly deploy an AKS cluster on Azur
 ## Usage Example
 
 ```hcl
+resource "tls_private_key" "key" {
+  algorithm = "RSA"
+}
+
+# There are two types of managed idetities "System assigned" & "UserAssigned". User-assigned managed identities can be used on multiple resources.
+resource "azurerm_user_assigned_identity" "identity" {
+  name                = "aksidentity"
+  resource_group_name = "aks-resource-group-name"
+  location            = "eastus"
+}
+
 module "aks_cluster" {
- depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
+  depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
   source     = "squareops/aks/azure"
 
+  name                              = "aks-demo"
+  environment                       = "demo"
+  kubernetes_version                = "1.26.3"
+  create_resource_group             = false  # Enable if you want to a create resource group for AKS cluster.
+  existing_resource_group_name      = "aks-resource-group-name"
+  resource_group_location           = "eastus"
   user_assigned_identity_id         = azurerm_user_assigned_identity.identity.id
   principal_id                      = azurerm_user_assigned_identity.identity.principal_id
   agents_count                      = "1" # per node pool
   agents_size                       = ["Standard_B2s", "Standard_DS2_v2"]  # node pool vm sizes
   network_plugin                    = local.network_plugin
   net_profile_dns_service_ip        = "192.168.0.10" # IP address within the Kubernetes service address range that will be used by cluster service discovery. Don't use the first IP address in your address range. The first address in your subnet range is used for the kubernetes.default.svc.cluster.local address.
-  net_profile_pod_cidr              = "10.244.0.0/16" # for aks pods cidr
+  net_profile_pod_cidr              = "10.244.0.0/16" # For aks pods cidr, not applicable when choosen "azure" network plugin.
   net_profile_docker_bridge_cidr    = "172.17.0.1/16" # It's required to select a CIDR for the Docker bridge network address because otherwise Docker will pick a subnet automatically, which could conflict with other CIDRs. You must pick an address space that doesn't collide with the rest of the CIDRs on your networks, including the cluster's service CIDR and pod CIDR. Default of 172.17.0.1/16.
   net_profile_service_cidr          = "192.168.0.0/16" # This range shouldn't be used by any network element on or connected to this virtual network. Service address CIDR must be smaller than /12. You can reuse this range across different AKS clusters.
   agents_pool_name                  = [format("%sinfra", local.name), format("%sapp", local.name)]
@@ -32,23 +49,16 @@ module "aks_cluster" {
   agents_min_count                  = "1"
   agents_max_count                  = "3"
   enable_node_public_ip             = "false" # If we want to create public nodes set this value "true"
-  agents_availability_zones         = ["1", "2", "3"] # Applies to all the regions except Central India
+  agents_availability_zones         = ["1", "2"] # Applies to all the regions except Central India
   rbac_enabled                      = "true"
   oidc_issuer                       = "true"
-  agents_max_pods                   = "58"
-  create_resource_group             = false  # Enable if you want to a create resource group for AKS cluster.
-  existing_resource_group_name      = "aks-resource-group"
-  resource_group_location           = "eastus"
-  environment                       = "prod"
-  name                              = format("%s-aks", local.name)
-  kubernetes_version                = local.k8s_version
   private_cluster_enabled           = "false"  # Cluster endpoint access
   sku_tier                          = "Free"
-  subnet_id                         = ["private-subnet-id-1","private-subnet-id-2"]
+  subnet_id                         = ["10.10.1.0/24", "10.10.0.0/24"] # list of private subnet CIDR's
   admin_username                    = "azureuser"  # node pool username
   public_ssh_key                    = tls_private_key.key.public_key_openssh
   agents_type                       = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
-  net_profile_outbound_type         = "loadBalancer"           # The outbound (egress) routing method which should be used for this Kubernetes Cluster. Possible values are loadBalancer and userDefinedRouting. Defaults to loadBalancer.
+  net_profile_outbound_type         = "loadBalancer"   # The outbound (egress) routing method which should be used for this Kubernetes Cluster. Possible values are loadBalancer and userDefinedRouting. Defaults to loadBalancer.
   log_analytics_workspace_sku       = "PerGB2018" # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
   enable_log_analytics_solution     = "true" # Log analytics solutions are typically software solutions with data visualization and insights tools.
   enable_control_plane_logs_scrape  = "true" # Scrapes logs of the aks control plane
@@ -56,18 +66,6 @@ module "aks_cluster" {
   additional_tags                   = local.additional_tags
   node_labels_app                   = { App-Services = "true" }
   node_labels_infra                 = { Infra-Services = "true" }
-}
-
-module "aks_node_pool" {
-  depends_on = [module.aks_cluster]
-  source     = "../../modules/aks_node_pool"
-
-  node_pool                  = {}
-  kubernetes_cluster_id      = module.aks_cluster.kubernetes_cluster_id
-  enable_auto_scaling        = "true"
-  enable_node_public_ip      = "false" # If we want to create public nodes set this value "true"
-  kubernetes_version         = local.k8s_version
-  subnet_id                  = ["private-subnet-id-1","private-subnet-id-2"]
 }
 ```
 

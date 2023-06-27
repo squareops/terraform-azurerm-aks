@@ -63,7 +63,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     enable_node_public_ip = var.enable_node_public_ip
     zones                 = var.agents_availability_zones
     type                  = var.agents_type
-    max_pods              = var.agents_max_pods
     node_labels           = var.node_labels_infra
 
     tags = {
