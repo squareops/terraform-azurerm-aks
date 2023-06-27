@@ -9,7 +9,7 @@ locals {
 
 module "vnet" {
   depends_on  = [azurerm_resource_group.terraform_infra]
-  source      = "squareops/vnet/azure"
+  source      = "git::https://github.com/anoushkaakhourysq/terraform-azure-vnet.git?ref=release/v1"
 
   name                          = local.name
   address_space                 = local.address_space
@@ -41,7 +41,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "squareops/aks/azure"
+  source     = "git::https://github.com/prajwalakhuj/terraform-azure-aks.git?ref=release/v1"
 
   name                              = format("%s-aks", local.name)
   environment                       = local.environment
