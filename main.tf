@@ -101,7 +101,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool"  {
     name                  = var.agents_pool_name[1]
     node_count            = var.agents_count
     vm_size               = var.agents_size[1]
-    vnet_subnet_id        = var.subnet_id[1]
+    vnet_subnet_id        = var.subnet_id[0]
     enable_auto_scaling   = var.enable_auto_scaling
     min_count             = var.enable_auto_scaling ? var.agents_min_count : null
     max_count             = var.enable_auto_scaling ? var.agents_max_count : null
