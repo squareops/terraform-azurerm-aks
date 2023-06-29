@@ -565,3 +565,15 @@ variable "default_node_labels" {
   type        = map(string)
   default     = { Infra-Services = "true" }
 }
+
+variable "managed_agent_pool_count" {
+  description = "The count of the managed agent pools"
+  type        = string
+  default     = "1"
+}
+
+variable "managed_agent_pool_size" {
+  description = "The size of the managed agent pools"
+  type        = string
+  default     = "Standard_DS2_v2"
+}

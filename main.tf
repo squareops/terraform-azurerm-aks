@@ -97,6 +97,24 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     ]
   }
 }
+
+resource "azurerm_kubernetes_cluster_node_pool" "managed_agent_pools"  {
+    count                  = var.managed_agent_pool_count
+    name                   = "pool${count.index}"
+    node_count             = var.default_agent_pool_count
+    vm_size                = var.managed_agent_pool_size
+    kubernetes_cluster_id   = azurerm_kubernetes_cluster.aks_cluster.id
+    os_disk_size_gb        = var.os_disk_size_gb
+    zones                  = var.agents_availability_zones
+    enable_auto_scaling    = var.enable_auto_scaling
+    min_count              = var.enable_auto_scaling ? var.agents_min_count : null
+    max_count              = var.enable_auto_scaling ? var.agents_max_count : null
+    enable_node_public_ip  = var.enable_node_public_ip
+    vnet_subnet_id         = var.subnet_id[0]
+    enable_host_encryption = true
+  }
+
+
 resource "azurerm_kubernetes_cluster_node_pool" "node_pool_app"  {
     count                 = var.create_managed_node_pool_app ? 1 : 0
     name                  = var.managed_node_pool_app_name
