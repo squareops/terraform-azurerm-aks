@@ -51,20 +51,20 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   default_node_pool {
-    orchestrator_version  = var.kubernetes_version
-    name                  = var.default_agent_pool_name
-    node_count            = var.default_agent_pool_count
-    vm_size               = var.default_agent_pool_size
-    os_disk_size_gb       = var.os_disk_size_gb
-    vnet_subnet_id        = var.subnet_id[0]
-    enable_auto_scaling   = var.enable_auto_scaling
-    min_count             = var.enable_auto_scaling ? var.agents_min_count : null
-    max_count             = var.enable_auto_scaling ? var.agents_max_count : null
-    enable_node_public_ip = var.enable_node_public_ip
-    zones                 = var.agents_availability_zones
-    type                  = var.agents_type
-    node_labels           = var.default_node_labels
-
+    orchestrator_version   = var.kubernetes_version
+    name                   = var.default_agent_pool_name
+    node_count             = var.default_agent_pool_count
+    vm_size                = var.default_agent_pool_size
+    os_disk_size_gb        = var.os_disk_size_gb
+    vnet_subnet_id         = var.subnet_id[0]
+    enable_auto_scaling    = var.enable_auto_scaling
+    min_count              = var.enable_auto_scaling ? var.agents_min_count : null
+    max_count              = var.enable_auto_scaling ? var.agents_max_count : null
+    enable_node_public_ip  = var.enable_node_public_ip
+    zones                  = var.agents_availability_zones
+    type                   = var.agents_type
+    node_labels            = var.default_node_labels
+    enable_host_encryption = true
     tags = {
       "agent_pool_name" = var.default_agent_pool_name
     }
