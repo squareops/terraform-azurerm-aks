@@ -64,7 +64,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     zones                  = var.agents_availability_zones
     type                   = var.agents_type
     node_labels            = var.default_node_labels
-    enable_host_encryption = true
+    enable_host_encryption = var.enable_host_encryption
     tags = {
       "agent_pool_name" = var.default_agent_pool_name
     }
@@ -111,7 +111,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "managed_agent_pools"  {
     max_count              = var.enable_auto_scaling ? var.agents_max_count : null
     enable_node_public_ip  = var.enable_node_public_ip
     vnet_subnet_id         = var.subnet_id[0]
-    enable_host_encryption = true
+    enable_host_encryption = var.enable_host_encryption
   }
 
 
@@ -128,6 +128,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool_app"  {
     kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
     zones                 = var.agents_availability_zones_app
     node_labels           = var.node_labels_app
+    enable_host_encryption = var.enable_host_encryption
     tags = {
       "agent_pool_name" = var.managed_node_pool_app_name
     }
@@ -147,6 +148,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
     zones                 = var.agents_availability_zones_monitor
     max_pods              = var.agents_max_pods
     node_labels           = var.node_labels_monitor
+    enable_host_encryption = var.enable_host_encryption
     tags = {
       "agent_pool_name" = var.managed_node_pool_monitor_name
     }
@@ -166,6 +168,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
     zones                 = var.agents_availability_zones_database
     max_pods              = var.agents_max_pods
     node_labels           = var.node_labels_database
+    enable_host_encryption = var.enable_host_encryption
     tags = {
       "agent_pool_name" = var.managed_node_pool_database_name
     }

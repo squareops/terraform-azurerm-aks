@@ -577,3 +577,9 @@ variable "managed_agent_pool_size" {
   type        = string
   default     = "Standard_DS2_v2"
 }
+
+variable "enable_host_encryption" {
+  description = "The enable the encryption of the hosts"
+  type        = bool
+  default     = false
+}
