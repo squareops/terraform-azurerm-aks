@@ -52,9 +52,9 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 
   default_node_pool {
     orchestrator_version  = var.kubernetes_version
-    name                  = var.agents_pool_name[0]
-    node_count            = var.agents_count
-    vm_size               = var.agents_size[0]
+    name                  = var.default_agent_pool_name
+    node_count            = var.default_agent_pool_count
+    vm_size               = var.default_agent_pool_size
     os_disk_size_gb       = var.os_disk_size_gb
     vnet_subnet_id        = var.subnet_id[0]
     enable_auto_scaling   = var.enable_auto_scaling
@@ -63,10 +63,10 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     enable_node_public_ip = var.enable_node_public_ip
     zones                 = var.agents_availability_zones
     type                  = var.agents_type
-    node_labels           = var.node_labels_infra
+    node_labels           = var.default_node_labels
 
     tags = {
-      "agent_pool_name" = var.agents_pool_name[0]
+      "agent_pool_name" = var.default_agent_pool_name
     }
   }
 
@@ -97,21 +97,59 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     ]
   }
 }
-resource "azurerm_kubernetes_cluster_node_pool" "node_pool"  {
-    name                  = var.agents_pool_name[1]
-    node_count            = var.agents_count
-    vm_size               = var.agents_size[1]
+resource "azurerm_kubernetes_cluster_node_pool" "node_pool_app"  {
+    count                 = var.create_managed_node_pool_app ? 1 : 0
+    name                  = var.managed_node_pool_app_name
+    node_count            = var.agents_count_app
+    vm_size               = var.managed_node_pool_app_size
     vnet_subnet_id        = var.subnet_id[0]
-    enable_auto_scaling   = var.enable_auto_scaling
-    min_count             = var.enable_auto_scaling ? var.agents_min_count : null
-    max_count             = var.enable_auto_scaling ? var.agents_max_count : null
+    enable_auto_scaling   = var.enable_auto_scaling_app
+    min_count             = var.enable_auto_scaling_app ? var.agents_min_count_app : null
+    max_count             = var.enable_auto_scaling_app ? var.agents_max_count_app : null
     enable_node_public_ip = var.enable_node_public_ip
     kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
-    zones                 = var.agents_availability_zones
-    max_pods              = var.agents_max_pods
+    zones                 = var.agents_availability_zones_app
     node_labels           = var.node_labels_app
     tags = {
-      "agent_pool_name" = var.agents_pool_name[1]
+      "agent_pool_name" = var.managed_node_pool_app_name
+    }
+  }
+
+resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
+    count                 = var.create_managed_node_pool_monitor ? 1 : 0
+    name                  = var.managed_node_pool_monitor_name
+    node_count            = var.agents_count_monitor
+    vm_size               = var.managed_node_pool_monitor_size
+    vnet_subnet_id        = var.subnet_id[0]
+    enable_auto_scaling   = var.enable_auto_scaling_monitor
+    min_count             = var.enable_auto_scaling_monitor ? var.agents_min_count_monitor : null
+    max_count             = var.enable_auto_scaling_monitor ? var.agents_max_count_monitor : null
+    enable_node_public_ip = var.enable_node_public_ip
+    kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
+    zones                 = var.agents_availability_zones_monitor
+    max_pods              = var.agents_max_pods
+    node_labels           = var.node_labels_monitor
+    tags = {
+      "agent_pool_name" = var.managed_node_pool_monitor_name
+    }
+  }
+
+  resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
+    count                 = var.create_managed_node_pool_database ? 1 : 0
+    name                  = var.managed_node_pool_database_name
+    node_count            = var.agents_count_database
+    vm_size               = var.managed_node_pool_monitor_size
+    vnet_subnet_id        = var.subnet_id[0]
+    enable_auto_scaling   = var.enable_auto_scaling_database
+    min_count             = var.enable_auto_scaling_database ? var.agents_min_count_database : null
+    max_count             = var.enable_auto_scaling_database ? var.agents_max_count_database : null
+    enable_node_public_ip = var.enable_node_public_ip
+    kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
+    zones                 = var.agents_availability_zones_database
+    max_pods              = var.agents_max_pods
+    node_labels           = var.node_labels_database
+    tags = {
+      "agent_pool_name" = var.managed_node_pool_database_name
     }
   }
 
