@@ -55,7 +55,7 @@ variable "resource_group_location" {
 variable "create_resource_group" {
   description = "To create a new resource group. Value in existing_resource_group will be ignored if this is true."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "existing_resource_group_name" {
