@@ -434,12 +434,6 @@ variable "agents_availability_zones_app" {
   default     = ["1", "2"]
 }
 
-variable "node_labels_app" {
-  description = "The labels for the app node pool"
-  type        = map(string)
-  default     = { App-Services = "true" }
-}
-
 variable "create_managed_node_pool_monitor" {
   description = "Whether to create the managed node pool for the monitor"
   type        = bool

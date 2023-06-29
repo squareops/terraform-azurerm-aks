@@ -134,7 +134,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
     }
   }
 
-  resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
+  resource "azurerm_kubernetes_cluster_node_pool" "node_pool_database"  {
     count                 = var.create_managed_node_pool_database ? 1 : 0
     name                  = var.managed_node_pool_database_name
     node_count            = var.agents_count_database
