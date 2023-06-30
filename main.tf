@@ -174,6 +174,13 @@ resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
     }
   }
 
+resource "null_resource" "open_service_mesh_addon" {
+  count                 = var.enable_open_service_mesh ? 1 : 0
+  provisioner "local-exec" {
+    command = "az aks enable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh"
+  }
+}
+
 resource "random_id" "log_analytics_workspace_name_suffix" {
   byte_length = 8
 }
