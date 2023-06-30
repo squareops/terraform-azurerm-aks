@@ -28,7 +28,7 @@ az keyvault create --name MyKeyVault --resource-group MyResourceGroup --location
 az keyvault secret set --vault-name "MyKeyVault" --name "mySSHKey" --file /home/user/.ssh/7777777777_9999999.pub
 ```
 4. Update the Key Vault name and ID in the Terraform data variables:
-Update the `aks.tf` file with the following values for key vault:
+Update the `example/complete/main.tf` file with the following values for key vault:
 ```bash
 data "azurerm_key_vault_secret" "ssh_key" {
   name         = "mySSHKey"
