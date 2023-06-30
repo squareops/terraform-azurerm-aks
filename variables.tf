@@ -587,5 +587,5 @@ variable "enable_host_encryption" {
 variable "enable_open_service_mesh" {
   description = "The enable the open service mesg (istio)"
   type        = bool
-  default     = false
+  default     = true
 }

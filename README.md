@@ -9,13 +9,39 @@ This module simplifies the deployment of AKS clusters, allowing users to quickly
 
 This module is ideal for users who want to quickly deploy an AKS cluster on Azure without the need for manual setup and configuration. It is also suitable for users who want to adopt best practices for security and scalability in their AKS deployments.
 
+**Setup SSH Keys for AKS nodes**
+1. Generate SSH keys using Azure CLI:
+```bash
+az sshkey create --name "mySSHKey" --resource-group "myResourceGroup"
+```
+**The resulting output lists the new key files' paths:**
+```bash
+Private key is saved to "/home/user/.ssh/7777777777_9999999".
+Public key is saved to "/home/user/.ssh/7777777777_9999999.pub".
+```
+2. Create Azure Key Vault using Azure CLI:
+```bash
+az keyvault create --name MyKeyVault --resource-group MyResourceGroup --location "East US"
+```
+3. Set SSH public key in Key Vault using Azure CLI:
+```bash
+az keyvault secret set --vault-name "MyKeyVault" --name "mySSHKey" --file /home/user/.ssh/7777777777_9999999.pub
+```
+4. Update the Key Vault name and ID in the Terraform data variables:
+Update the `aks.tf` file with the following values for key vault:
+```bash
+data "azurerm_key_vault_secret" "ssh_key" {
+  name         = "mySSHKey"
+  key_vault_id = "/subscriptions/{subscription-id}/resourceGroups/MyResourceGroup/providers/Microsoft.KeyVault/vaults/MyKeyVault"
+}
+```
 
 ## Usage Example
 
 ```hcl
 data "azurerm_key_vault_secret" "ssh_key" {
   name         = "test-ssh-key"
-  key_vault_id = "/subscriptions/f9c51073-abc1-4a5d-8b8f-0b8f57a78829/resourceGroups/prod-skaf-tfstate-rg/providers/Microsoft.KeyVault/vaults/test-ssh-key-skaf"
+  key_vault_id = "/subscriptions/{subscription-id}/resourceGroups/prod-skaf-tfstate-rg/providers/Microsoft.KeyVault/vaults/test-ssh-key-skaf"
 }
 
 # There are two types of managed idetities "System assigned" & "UserAssigned". User-assigned managed identities can be used on multiple resources.

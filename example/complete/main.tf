@@ -28,7 +28,7 @@ module "vnet" {
 
 data "azurerm_key_vault_secret" "ssh_key" {
   name         = "test-ssh-key"
-  key_vault_id = "/subscriptions/f9c51073-abc1-4a5d-8b8f-0b8f57a78829/resourceGroups/prod-skaf-tfstate-rg/providers/Microsoft.KeyVault/vaults/test-ssh-key-skaf"
+  key_vault_id = "/subscriptions/{subscription-id}/resourceGroups/prod-skaf-tfstate-rg/providers/Microsoft.KeyVault/vaults/test-ssh-key-skaf"
 }
 
 # There are two types of managed idetities "System assigned" & "UserAssigned". User-assigned managed identities can be used on multiple resources.
@@ -71,6 +71,7 @@ module "aks_cluster" {
   agents_availability_zones          = ["1", "2", "3"] # Does not applies to all regions please verify the availablity zones for the respective region.
   rbac_enabled                       = true
   oidc_issuer                        = true
+  enable_open_service_mesh           = false   # Add on for the open service mesh (istio)
   private_cluster_enabled            = false  # AKS Cluster endpoint access, Disable for public access
   sku_tier                           = "Free"
   subnet_id                          = module.vnet.private_subnets
