@@ -55,7 +55,7 @@ variable "resource_group_location" {
 variable "create_resource_group" {
   description = "To create a new resource group. Value in existing_resource_group will be ignored if this is true."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "existing_resource_group_name" {
@@ -384,4 +384,208 @@ variable "node_labels_infra" {
   description = "The node labels to be attached to be attached to the aks infra node pool"
   type        = map(string)
   default     = {}
+}
+
+variable "create_managed_node_pool_app" {
+  description = "Whether to create the managed node pool for the app"
+  type        = bool
+  default     = true
+}
+
+variable "managed_node_pool_app_name" {
+  description = "The name of the managed node pool for the app"
+  type        = string
+  default     = "app"
+}
+
+variable "managed_node_pool_app_size" {
+  description = "The size of the managed node pool for the app"
+  type        = string
+  default     = "Standard_DS2_v2"
+}
+
+variable "enable_auto_scaling_app" {
+  description = "Whether to enable auto scaling for the app node pool"
+  type        = bool
+  default     = true
+}
+
+variable "agents_count_app" {
+  description = "The initial number of agents for the app node pool"
+  type        = string
+  default     = "1"
+}
+
+variable "agents_min_count_app" {
+  description = "The minimum number of agents for the app node pool"
+  type        = string
+  default     = "1"
+}
+
+variable "agents_max_count_app" {
+  description = "The maximum number of agents for the app node pool"
+  type        = string
+  default     = "3"
+}
+
+variable "agents_availability_zones_app" {
+  description = "The availability zones for the app node pool"
+  type        = list(string)
+  default     = ["1", "2"]
+}
+
+variable "create_managed_node_pool_monitor" {
+  description = "Whether to create the managed node pool for the monitor"
+  type        = bool
+  default     = false
+}
+
+variable "managed_node_pool_monitor_name" {
+  description = "The name of the managed node pool for the monitor"
+  type        = string
+  default     = "monitor"
+}
+
+variable "managed_node_pool_monitor_size" {
+  description = "The size of the managed node pool for the monitor"
+  type        = string
+  default     = "Standard_DS2_v2"
+}
+
+variable "enable_auto_scaling_monitor" {
+  description = "Whether to enable auto scaling for the monitor node pool"
+  type        = bool
+  default     = true
+}
+
+variable "agents_count_monitor" {
+  description = "The initial number of agents for the monitor node pool"
+  type        = string
+  default     = "1"
+}
+
+variable "agents_min_count_monitor" {
+  description = "The minimum number of agents for the monitor node pool"
+  type        = string
+  default     = "1"
+}
+
+variable "agents_max_count_monitor" {
+  description = "The maximum number of agents for the monitor node pool"
+  type        = string
+  default     = "3"
+}
+
+variable "agents_availability_zones_monitor" {
+  description = "The availability zones for the monitor node pool"
+  type        = list(string)
+  default     = ["1", "2"]
+}
+
+variable "node_labels_monitor" {
+  description = "The labels for the monitor node pool"
+  type        = map(string)
+  default     = { Monitor-Services = "true" }
+}
+
+variable "create_managed_node_pool_database" {
+  description = "Whether to create the managed node pool for the database"
+  type        = bool
+  default     = false
+}
+
+variable "managed_node_pool_database_name" {
+  description = "The name of the managed node pool for the database"
+  type        = string
+  default     = "database"
+}
+
+variable "managed_node_pool_database_size" {
+  description = "The size of the managed node pool for the database"
+  type        = string
+  default     = "Standard_DS2_v2"
+}
+
+variable "enable_auto_scaling_database" {
+  description = "Whether to enable auto scaling for the database node pool"
+  type        = bool
+  default     = true
+}
+
+variable "agents_count_database" {
+  description = "The initial number of agents for the database node pool"
+  type        = string
+  default     = "1"
+}
+
+variable "agents_min_count_database" {
+  description = "The minimum number of agents for the database node pool"
+  type        = string
+  default     = "1"
+}
+
+variable "agents_max_count_database" {
+  description = "The maximum number of agents for the database node pool"
+  type        = string
+  default     = "3"
+}
+
+variable "agents_availability_zones_database" {
+  description = "The availability zones for the database node pool"
+  type        = list(string)
+  default     = ["1", "2"]
+}
+
+variable "node_labels_database" {
+  description = "The labels for the database node pool"
+  type        = map(string)
+  default     = { Database-Services = "true" }
+}
+
+variable "default_agent_pool_name" {
+  description = "The name of the default agent pool"
+  type        = string
+  default     = "infra"
+}
+
+variable "default_agent_pool_count" {
+  description = "The number of agents in the default agent pool"
+  type        = string
+  default     = "1"
+}
+
+variable "default_agent_pool_size" {
+  description = "The size of the default agent pool"
+  type        = string
+  default     = "Standard_DS2_v2"
+}
+
+variable "default_node_labels" {
+  description = "The labels for the default agent pool"
+  type        = map(string)
+  default     = { Infra-Services = "true" }
+}
+
+variable "managed_agent_pool_count" {
+  description = "The count of the managed agent pools"
+  type        = string
+  default     = "1"
+}
+
+variable "managed_agent_pool_size" {
+  description = "The size of the managed agent pools"
+  type        = string
+  default     = "Standard_DS2_v2"
+}
+
+variable "enable_host_encryption" {
+  description = "The enable the encryption of the hosts"
+  type        = bool
+  default     = false
+}
+
+variable "enable_open_service_mesh" {
+  description = "The enable the open service mesg (istio)"
+  type        = bool
+  default     = true
 }
