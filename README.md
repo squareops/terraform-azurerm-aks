@@ -55,12 +55,12 @@ module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
   source     = "git::https://github.com/sq-ia/terraform-azure-aks.git?ref=release/v1"
 
-  name                               = "aks-cluster-name"
-  environment                        = "prod"
-  kubernetes_version                 = "1.26.3"
+  name                               = format("%s-aks", local.name)
+  environment                        = local.environment
+  kubernetes_version                 = local.k8s_version
   create_resource_group              = false  # Enable if you want to a create resource group for AKS cluster.
-  existing_resource_group_name       = "resource-group-name"
-  resource_group_location            = "eastus"
+  existing_resource_group_name       = azurerm_resource_group.terraform_infra.name
+  resource_group_location            = azurerm_resource_group.terraform_infra.location
   user_assigned_identity_id          = azurerm_user_assigned_identity.identity.id
   principal_id                       = azurerm_user_assigned_identity.identity.principal_id
   agents_size                        = ["Standard_DS2_v2", "Standard_DS2_v2"]  # node pool vm sizes in this list (0 for infra, 1 for app )
@@ -72,35 +72,36 @@ module "aks_cluster" {
   default_agent_pool_name            = "infra"
   default_agent_pool_count           = "1"
   default_agent_pool_size            = "Standard_DS2_v2"
-  enable_host_encryption             = false
+  host_encryption_enabled            = false
   default_node_labels                = { Infra-Services = "true" }
   managed_agent_pool_count           = "0"  # number of managed node pools to be created.
   managed_agent_pool_size            = "Standard_DS2_v2"  # Agent size to mapped to the managed node pools.
   os_disk_size_gb                    = "30"
-  enable_auto_scaling                = true
+  auto_scaling_enabled               = true
   agents_min_count                   = "1"
   agents_max_count                   = "3"
-  enable_node_public_ip              = false  # If we want to create public nodes set this value "true"
+  node_public_ip_enabled             = false  # If we want to create public nodes set this value "true"
   agents_availability_zones          = ["1", "2", "3"] # Does not applies to all regions please verify the availablity zones for the respective region.
   rbac_enabled                       = true
-  oidc_issuer                        = true
+  oidc_issuer_enabled                = true
+  open_service_mesh_enabled          = false   # Add on for the open service mesh (istio)
   private_cluster_enabled            = false  # AKS Cluster endpoint access, Disable for public access
   sku_tier                           = "Free"
-  subnet_id                          = ["10.0.0.0/24","10.0.0.2/24"]
+  subnet_id                          = module.vnet.private_subnets
   admin_username                     = "azureuser"  # node pool username
   public_ssh_key                     = data.azurerm_key_vault_secret.ssh_key.value
   agents_type                        = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
   net_profile_outbound_type          = "loadBalancer"   # The outbound (egress) routing method which should be used for this Kubernetes Cluster. Possible values are loadBalancer and userDefinedRouting. Defaults to loadBalancer.
   log_analytics_workspace_sku        = "PerGB2018" # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
-  enable_log_analytics_solution      = true # Log analytics solutions are typically software solutions with data visualization and insights tools.
-  enable_control_plane_logs_scrape   = true # Scrapes logs of the aks control plane
-  control_plane_monitor_name         = "aks-control-plane-logs-monitor" # Control plane logs monitoring such as "kube-apiserver", "cloud-controller-manager", "kube-scheduler"
+  log_analytics_solution_enabled     = true # Log analytics solutions are typically software solutions with data visualization and insights tools.
+  control_plane_logs_scrape_enabled  = true # Scrapes logs of the aks control plane
+  control_plane_monitor_name         = format("%s-%s-aks-control-plane-logs-monitor", local.name, local.environment) # Control plane logs monitoring such as "kube-apiserver", "cloud-controller-manager", "kube-scheduler"
   additional_tags                    = local.additional_tags
 # Managed node pool App
   create_managed_node_pool_app       = true
   managed_node_pool_app_name         = "app"
   managed_node_pool_app_size         = "Standard_DS2_v2"
-  enable_auto_scaling_app            = true
+  auto_scaling_app_enabled           = true
   agents_count_app                   = "1"
   agents_min_count_app               = "1"
   agents_max_count_app               = "3"
@@ -110,7 +111,7 @@ module "aks_cluster" {
   create_managed_node_pool_monitor   = false
   managed_node_pool_monitor_name     = "monitor"
   managed_node_pool_monitor_size     = "Standard_DS2_v2"
-  enable_auto_scaling_monitor        = true
+  auto_scaling_monitor_enabled       = true
   agents_count_monitor               = "1"
   agents_min_count_monitor           = "1"
   agents_max_count_monitor           = "3"
@@ -120,7 +121,7 @@ module "aks_cluster" {
   create_managed_node_pool_database  = false
   managed_node_pool_database_name    = "database"
   managed_node_pool_database_size    = "Standard_DS2_v2"
-  enable_auto_scaling_database       = true
+  auto_scaling_database_enabled      = true
   agents_count_database              = "1"
   agents_min_count_database          = "1"
   agents_max_count_database          = "3"
