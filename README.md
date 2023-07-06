@@ -55,12 +55,12 @@ module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
   source     = "git::https://github.com/sq-ia/terraform-azure-aks.git?ref=release/v1"
 
-  name                               = format("%s-aks", local.name)
-  environment                        = local.environment
-  kubernetes_version                 = local.k8s_version
+  name                               = "aks-cluster-name"
+  environment                        = "demo"
+  kubernetes_version                 = "1.26.3"
   create_resource_group              = false  # Enable if you want to a create resource group for AKS cluster.
-  existing_resource_group_name       = azurerm_resource_group.terraform_infra.name
-  resource_group_location            = azurerm_resource_group.terraform_infra.location
+  existing_resource_group_name       = "resource-group-name"
+  resource_group_location            = "eastus"
   user_assigned_identity_id          = azurerm_user_assigned_identity.identity.id
   principal_id                       = azurerm_user_assigned_identity.identity.principal_id
   agents_size                        = ["Standard_DS2_v2", "Standard_DS2_v2"]  # node pool vm sizes in this list (0 for infra, 1 for app )
@@ -87,7 +87,7 @@ module "aks_cluster" {
   open_service_mesh_enabled          = false   # Add on for the open service mesh (istio)
   private_cluster_enabled            = false  # AKS Cluster endpoint access, Disable for public access
   sku_tier                           = "Free"
-  subnet_id                          = module.vnet.private_subnets
+  subnet_id                          = ["10.0.0.0/24","10.0.0.2/24"]
   admin_username                     = "azureuser"  # node pool username
   public_ssh_key                     = data.azurerm_key_vault_secret.ssh_key.value
   agents_type                        = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
@@ -95,7 +95,7 @@ module "aks_cluster" {
   log_analytics_workspace_sku        = "PerGB2018" # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
   log_analytics_solution_enabled     = true # Log analytics solutions are typically software solutions with data visualization and insights tools.
   control_plane_logs_scrape_enabled  = true # Scrapes logs of the aks control plane
-  control_plane_monitor_name         = format("%s-%s-aks-control-plane-logs-monitor", local.name, local.environment) # Control plane logs monitoring such as "kube-apiserver", "cloud-controller-manager", "kube-scheduler"
+  control_plane_monitor_name         = "aks-control-plane-logs-monitor" # Control plane logs monitoring such as "kube-apiserver", "cloud-controller-manager", "kube-scheduler"
   additional_tags                    = local.additional_tags
 # Managed node pool App
   create_managed_node_pool_app       = true
