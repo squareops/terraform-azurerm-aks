@@ -18,9 +18,8 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aks_cluster"></a> [aks_cluster](#module\_aks_cluster) | ./modules/aks_cluster | 1.0 |
-| <a name="module_aks_node_pool"></a> [aks_node_pool](#module\_aks_node_pool) | ./modules/aks_node_pool | 1.0 |
-| <a name="module_vnet"></a> [vnet](#module\_vnet) | squareops/vnet/azure | 1.0 |
+| <a name="module_aks_cluster"></a> [aks_cluster](#module\_aks_cluster) | [squareops/aks/azure](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1) | 1.0 |
+| <a name="module_vnet"></a> [vnet](#module\_vnet) | [squareops/vnet/azure](https://github.com/sq-ia/terraform-azure-vnet/tree/release/v1) | 1.0 |
 
 ## Resources
 

@@ -53,7 +53,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "git::https://github.com/prajwalakhuj/terraform-azure-aks.git?ref=release/v1"
+  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git?ref=release/v1"
 
   name                               = "aks-cluster-name"
   environment                        = "prod"
