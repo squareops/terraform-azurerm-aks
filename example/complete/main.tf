@@ -9,7 +9,7 @@ locals {
 
 module "vnet" {
   depends_on  = [azurerm_resource_group.terraform_infra]
-  source      = "git::https://github.com/anoushkaakhourysq/terraform-azure-vnet.git?ref=release/v1"
+  source      = "git::https://github.com/sq-ia/terraform-azure-vnet.git?ref=release/v1"
 
   name                          = local.name
   address_space                 = local.address_space
@@ -30,13 +30,8 @@ module "vnet" {
 }
 
 data "azurerm_key_vault_secret" "ssh_key" {
-  name         = "atmosly-ssh-public"
-  key_vault_id = "/subscriptions/{subscription-id}/resourceGroups/demo-atomsly-tfstate-rg/providers/Microsoft.KeyVault/vaults/atmosly"
-}
-
-resource "tls_private_key" "key" {
-  algorithm = "RSA"
-  enabled   = data.azurerm_key_vault_secret.ssh_key.name == "" && data.azurerm_key_vault_secret.ssh_key.key_vault_id == ""
+  name         = ""
+  key_vault_id = ""
 }
 
 # There are two types of managed idetities "System assigned" & "UserAssigned". User-assigned managed identities can be used on multiple resources.
@@ -48,7 +43,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "git::https://github.com/prajwalakhuj/terraform-azure-aks.git?ref=release/v1"
+  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git?ref=release/v1"
 
   name                               = format("%s-aks", local.name)
   environment                        = local.environment
@@ -68,10 +63,10 @@ module "aks_cluster" {
   default_agent_pool_size            = "Standard_DS2_v2"
   host_encryption_enabled            = false
   default_node_labels                = { Addon-Services = "true" }
-  os_disk_size_gb                    = "30"
+  os_disk_size_gb                    = 30
   auto_scaling_enabled               = true
-  agents_min_count                   = "1"
-  agents_max_count                   = "3"
+  agents_min_count                   = 1
+  agents_max_count                   = 2
   node_public_ip_enabled             = false  # If we want to create public nodes set this value "true"
   agents_availability_zones          = ["1", "2", "3"] # Does not applies to all regions please verify the availablity zones for the respective region.
   rbac_enabled                       = true
@@ -81,7 +76,7 @@ module "aks_cluster" {
   sku_tier                           = "Free"
   subnet_id                          = module.vnet.private_subnets
   admin_username                     = "azureuser"  # node pool username
-  public_ssh_key                     = data.azurerm_key_vault_secret.ssh_key.value != "" ? data.azurerm_key_vault_secret.ssh_key.value : tls_private_key.key.public_key_openssh
+  public_ssh_key                     = data.azurerm_key_vault_secret.ssh_key.value
   agents_type                        = "VirtualMachineScaleSets"  # Creates an Agent Pool backed by a Virtual Machine Scale Set.
   net_profile_outbound_type          = "loadBalancer"   # The outbound (egress) routing method which should be used for this Kubernetes Cluster. Possible values are loadBalancer and userDefinedRouting. Defaults to loadBalancer.
   log_analytics_workspace_sku        = "PerGB2018" # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
@@ -93,7 +88,7 @@ module "aks_cluster" {
 
 module "aks_managed_node_pool" {
   depends_on = [module.aks_cluster]
-  source     = "../../modules/managed_node_pools"
+  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git//modules/managed_node_pools?ref=release/v1"
 
   resource_group_name   = azurerm_resource_group.terraform_infra.name
   orchestrator_version  = local.k8s_version
@@ -112,10 +107,10 @@ module "aks_managed_node_pool" {
       availability_zones       = ["1", "2", "3"]
       enable_node_public_ip    = false # if set to true node_public_ip_prefix_id is required
       node_public_ip_prefix_id = ""
-      node_labels              = { "App-service" = "true" }
+      node_labels              = { App-service = "true" }
       node_taints              = ["workload=example:NoSchedule"]
       host_encryption_enabled  = false
-      max_pods                 = 50
+      max_pods                 = 30
       agents_tags              = local.additional_tags
     },
  }
