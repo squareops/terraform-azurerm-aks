@@ -13,9 +13,9 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aks_cluster"></a> [aks\_cluster](#module\_aks\_cluster) | git::https://github.com/sq-ia/terraform-azure-aks.git | release/v1 |
-| <a name="module_aks_managed_node_pool"></a> [aks\_managed\_node\_pool](#module\_aks\_managed\_node\_pool) | git::https://github.com/sq-ia/terraform-azure-aks.git//modules/managed_node_pools | release/v1 |
-| <a name="module_vnet"></a> [vnet](#module\_vnet) | git::https://github.com/sq-ia/terraform-azure-vnet.git | release/v1 |
+| <a name="module_aks_cluster"></a> [aks\_cluster](#module\_aks\_cluster) | git::https://github.com/squareops/terraform-azure-aks.git | release/v1 |
+| <a name="module_aks_managed_node_pool"></a> [aks\_managed\_node\_pool](#module\_aks\_managed\_node\_pool) | git::https://github.com/squareops/terraform-azure-aks.git//modules/managed_node_pools | release/v1 |
+| <a name="module_vnet"></a> [vnet](#module\_vnet) | git::https://github.com/squareops/terraform-azure-vnet.git | release/v1 |
 
 ## Resources
 

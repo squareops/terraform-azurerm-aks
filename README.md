@@ -53,7 +53,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git?ref=release/v1"
+  source     = "git::https://github.com/squareops/terraform-azure-aks.git?ref=main"
 
   name                               = "aks-cluster"
   environment                        = "prod"
@@ -98,7 +98,7 @@ module "aks_cluster" {
 
 module "aks_managed_node_pool" {
   depends_on = [module.aks_cluster]
-  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git//modules/managed_node_pools?ref=release/v1"
+  source     = "git::https://github.com/squareops/terraform-azure-aks.git//modules/managed_node_pools?ref=main"
 
   resource_group_name   = "AKS-resource-group"
   orchestrator_version  = "1.26.3"
@@ -127,10 +127,10 @@ module "aks_managed_node_pool" {
 }
 ```
 
-Refer [example](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1/example/complete) for more details.
+Refer [example](https://github.com/squareops/terraform-azure-aks/tree/main/example/complete) for more details.
 
 ## Permissions
-The required permissions to create resources from this module can be found [here](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1/roles.md)
+The required permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-azure-aks/tree/main/roles.md)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -276,7 +276,7 @@ The required permissions to create resources from this module can be found [here
 
 To report an issue with a project:
 
-  1. Check the repository's [issue tracker](https://github.com/sq-ia/terraform-azure-aks/issues) on GitHub
+  1. Check the repository's [issue tracker](https://github.com/squareops/terraform-azure-aks/issues) on GitHub
   2. Search to see if the issue has already been reported
   3. If you can't find an answer to your question in the documentation or issue tracker, you can ask a question by creating a new issue. Be sure to provide enough context and details so others can understand your problem.
 
@@ -288,7 +288,7 @@ Apache License, Version 2.0, January 2004 (http://www.apache.org/licenses/).
 
 To support a GitHub project by liking it, you can follow these steps:
 
-  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/sq-ia/terraform-azure-aks).
+  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/squareops/terraform-azure-aks).
 
   2. Click the "Star" button: On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
 

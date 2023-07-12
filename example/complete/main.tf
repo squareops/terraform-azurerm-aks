@@ -15,7 +15,7 @@ resource "azurerm_resource_group" "terraform_infra" {
 
 module "vnet" {
   depends_on  = [azurerm_resource_group.terraform_infra]
-  source      = "git::https://github.com/sq-ia/terraform-azure-vnet.git?ref=release/v1"
+  source      = "git::https://github.com/squareops/terraform-azure-vnet.git?ref=main"
 
   name                          = local.name
   address_space                 = local.address_space
@@ -49,7 +49,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git?ref=release/v1"
+  source     = "git::https://github.com/squareops/terraform-azure-aks.git?ref=main"
 
   name                               = format("%s-aks", local.name)
   environment                        = local.environment
@@ -94,7 +94,7 @@ module "aks_cluster" {
 
 module "aks_managed_node_pool" {
   depends_on = [module.aks_cluster]
-  source     = "git::https://github.com/sq-ia/terraform-azure-aks.git//modules/managed_node_pools?ref=release/v1"
+  source     = "git::https://github.com/squareops/terraform-azure-aks.git//modules/managed_node_pools?ref=main"
 
   resource_group_name   = azurerm_resource_group.terraform_infra.name
   orchestrator_version  = local.k8s_version
