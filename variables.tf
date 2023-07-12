@@ -386,24 +386,6 @@ variable "node_labels_infra" {
   default     = {}
 }
 
-variable "create_managed_node_pool_app" {
-  description = "Whether to create the managed node pool for the app"
-  type        = bool
-  default     = true
-}
-
-variable "managed_node_pool_app_name" {
-  description = "The name of the managed node pool for the app"
-  type        = string
-  default     = "app"
-}
-
-variable "managed_node_pool_app_size" {
-  description = "The size of the managed node pool for the app"
-  type        = string
-  default     = "Standard_DS2_v2"
-}
-
 variable "auto_scaling_app_enabled" {
   description = "Whether to enable auto scaling for the app node pool"
   type        = bool
@@ -432,24 +414,6 @@ variable "agents_availability_zones_app" {
   description = "The availability zones for the app node pool"
   type        = list(string)
   default     = ["1", "2"]
-}
-
-variable "create_managed_node_pool_monitor" {
-  description = "Whether to create the managed node pool for the monitor"
-  type        = bool
-  default     = false
-}
-
-variable "managed_node_pool_monitor_name" {
-  description = "The name of the managed node pool for the monitor"
-  type        = string
-  default     = "monitor"
-}
-
-variable "managed_node_pool_monitor_size" {
-  description = "The size of the managed node pool for the monitor"
-  type        = string
-  default     = "Standard_DS2_v2"
 }
 
 variable "auto_scaling_monitor_enabled" {
@@ -486,24 +450,6 @@ variable "node_labels_monitor" {
   description = "The labels for the monitor node pool"
   type        = map(string)
   default     = { Monitor-Services = "true" }
-}
-
-variable "create_managed_node_pool_database" {
-  description = "Whether to create the managed node pool for the database"
-  type        = bool
-  default     = false
-}
-
-variable "managed_node_pool_database_name" {
-  description = "The name of the managed node pool for the database"
-  type        = string
-  default     = "database"
-}
-
-variable "managed_node_pool_database_size" {
-  description = "The size of the managed node pool for the database"
-  type        = string
-  default     = "Standard_DS2_v2"
 }
 
 variable "auto_scaling_database_enabled" {
@@ -564,18 +510,6 @@ variable "default_node_labels" {
   description = "The labels for the default agent pool"
   type        = map(string)
   default     = { Infra-Services = "true" }
-}
-
-variable "managed_agent_pool_count" {
-  description = "The count of the managed agent pools"
-  type        = string
-  default     = "1"
-}
-
-variable "managed_agent_pool_size" {
-  description = "The size of the managed agent pools"
-  type        = string
-  default     = "Standard_DS2_v2"
 }
 
 variable "host_encryption_enabled" {
