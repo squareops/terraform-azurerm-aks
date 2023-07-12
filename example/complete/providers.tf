@@ -16,12 +16,6 @@ locals {
   }
 }
 
-resource "azurerm_resource_group" "terraform_infra" {
-  name            = format("%s-%s-rg", local.environment, local.name)
-  location        = local.region
-  tags            = local.additional_tags
-}
-
 # Kubernetes provider
 
 provider "kubernetes" {

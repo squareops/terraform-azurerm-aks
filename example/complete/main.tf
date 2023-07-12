@@ -7,6 +7,12 @@ locals {
   k8s_version       = "1.26.3"     # Kubernetes cluster version
 }
 
+resource "azurerm_resource_group" "terraform_infra" {
+  name            = format("%s-%s-rg", local.environment, local.name)
+  location        = local.region
+  tags            = local.additional_tags
+}
+
 module "vnet" {
   depends_on  = [azurerm_resource_group.terraform_infra]
   source      = "git::https://github.com/sq-ia/terraform-azure-vnet.git?ref=release/v1"
