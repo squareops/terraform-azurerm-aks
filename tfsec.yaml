@@ -1,0 +1,2 @@
+exclude:
+  - azure-container-logging # Container logging for azure (deprecated)
