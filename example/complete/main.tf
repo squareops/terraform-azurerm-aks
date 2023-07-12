@@ -64,7 +64,7 @@ module "aks_cluster" {
   net_profile_pod_cidr               = "10.244.0.0/16" # For aks pods cidr, when choosen "azure" network plugin these value will be passed as null.
   net_profile_docker_bridge_cidr     = "172.17.0.1/16" # It's required to select a CIDR for the Docker bridge network address because otherwise Docker will pick a subnet automatically, which could conflict with other CIDRs. You must pick an address space that doesn't collide with the rest of the CIDRs on your networks, including the cluster's service CIDR and pod CIDR. Default of 172.17.0.1/16.
   net_profile_service_cidr           = "192.168.0.0/16" # This range shouldn't be used by any network element on or connected to this virtual network. Service address CIDR must be smaller than /12. You can reuse this range across different AKS clusters.
-  default_agent_pool_name            = "infra"
+  default_agent_pool_name            = "addons"
   default_agent_pool_count           = "1"
   default_agent_pool_size            = "Standard_DS2_v2"
   host_encryption_enabled            = false
