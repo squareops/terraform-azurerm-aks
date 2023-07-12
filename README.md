@@ -127,7 +127,7 @@ module "aks_managed_node_pool" {
 }
 ```
 
-Refer [example](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1) for more details.
+Refer [example](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1/example/complete) for more details.
 
 ## Permissions
 The required permissions to create resources from this module can be found [here](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1/roles.md)
