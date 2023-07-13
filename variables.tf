@@ -150,7 +150,7 @@ variable "balance_similar_node_groups" {
   description = "Indicates whether to balance similar node groups."
 }
 
-variable "oidc_issuer" {
+variable "oidc_issuer_enabled" {
   default = true
   type    = bool
   description = "Indicates whether to oidc issuer is enabled."
@@ -252,13 +252,13 @@ variable "os_disk_size_gb" {
   description = "The size of the OS disk in gigabytes."
 }
 
-variable "enable_auto_scaling" {
+variable "auto_scaling_enabled" {
   default = false
   type    = bool
   description = "Enables or disables auto-scaling."
 }
 
-variable "enable_node_public_ip" {
+variable "node_public_ip_enabled" {
   default = true
   type    = bool
   description = "Indicates whether nodes have public IP addresses."
@@ -338,7 +338,7 @@ variable "log_analytics_workspace_sku" {
   default     = "PerGB2018"
 }
 
-variable "enable_log_analytics_solution" {
+variable "log_analytics_solution_enabled" {
   description = "Enable or disable log analytics solution"
   type        = bool
   default     = true
@@ -350,7 +350,7 @@ variable "log_analytics_solution_name" {
   type    = string
 }
 
-variable "enable_control_plane_logs_scrape" {
+variable "control_plane_logs_scrape_enabled" {
   description = "Enable or disable control plane logs scraping"
   type        = bool
   default     = true
@@ -386,25 +386,7 @@ variable "node_labels_infra" {
   default     = {}
 }
 
-variable "create_managed_node_pool_app" {
-  description = "Whether to create the managed node pool for the app"
-  type        = bool
-  default     = true
-}
-
-variable "managed_node_pool_app_name" {
-  description = "The name of the managed node pool for the app"
-  type        = string
-  default     = "app"
-}
-
-variable "managed_node_pool_app_size" {
-  description = "The size of the managed node pool for the app"
-  type        = string
-  default     = "Standard_DS2_v2"
-}
-
-variable "enable_auto_scaling_app" {
+variable "auto_scaling_app_enabled" {
   description = "Whether to enable auto scaling for the app node pool"
   type        = bool
   default     = true
@@ -434,25 +416,7 @@ variable "agents_availability_zones_app" {
   default     = ["1", "2"]
 }
 
-variable "create_managed_node_pool_monitor" {
-  description = "Whether to create the managed node pool for the monitor"
-  type        = bool
-  default     = false
-}
-
-variable "managed_node_pool_monitor_name" {
-  description = "The name of the managed node pool for the monitor"
-  type        = string
-  default     = "monitor"
-}
-
-variable "managed_node_pool_monitor_size" {
-  description = "The size of the managed node pool for the monitor"
-  type        = string
-  default     = "Standard_DS2_v2"
-}
-
-variable "enable_auto_scaling_monitor" {
+variable "auto_scaling_monitor_enabled" {
   description = "Whether to enable auto scaling for the monitor node pool"
   type        = bool
   default     = true
@@ -488,25 +452,7 @@ variable "node_labels_monitor" {
   default     = { Monitor-Services = "true" }
 }
 
-variable "create_managed_node_pool_database" {
-  description = "Whether to create the managed node pool for the database"
-  type        = bool
-  default     = false
-}
-
-variable "managed_node_pool_database_name" {
-  description = "The name of the managed node pool for the database"
-  type        = string
-  default     = "database"
-}
-
-variable "managed_node_pool_database_size" {
-  description = "The size of the managed node pool for the database"
-  type        = string
-  default     = "Standard_DS2_v2"
-}
-
-variable "enable_auto_scaling_database" {
+variable "auto_scaling_database_enabled" {
   description = "Whether to enable auto scaling for the database node pool"
   type        = bool
   default     = true
@@ -566,25 +512,13 @@ variable "default_node_labels" {
   default     = { Infra-Services = "true" }
 }
 
-variable "managed_agent_pool_count" {
-  description = "The count of the managed agent pools"
-  type        = string
-  default     = "1"
-}
-
-variable "managed_agent_pool_size" {
-  description = "The size of the managed agent pools"
-  type        = string
-  default     = "Standard_DS2_v2"
-}
-
-variable "enable_host_encryption" {
+variable "host_encryption_enabled" {
   description = "The enable the encryption of the hosts"
   type        = bool
   default     = false
 }
 
-variable "enable_open_service_mesh" {
+variable "open_service_mesh_enabled" {
   description = "The enable the open service mesg (istio)"
   type        = bool
   default     = true

@@ -23,7 +23,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   private_cluster_enabled           = var.private_cluster_enabled
   sku_tier                          = var.sku_tier
   role_based_access_control_enabled = var.rbac_enabled
-  oidc_issuer_enabled               = var.oidc_issuer
+  oidc_issuer_enabled               = var.oidc_issuer_enabled
 
   auto_scaler_profile {
     balance_similar_node_groups      = var.balance_similar_node_groups
@@ -57,14 +57,14 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     vm_size                = var.default_agent_pool_size
     os_disk_size_gb        = var.os_disk_size_gb
     vnet_subnet_id         = var.subnet_id[0]
-    enable_auto_scaling    = var.enable_auto_scaling
-    min_count              = var.enable_auto_scaling ? var.agents_min_count : null
-    max_count              = var.enable_auto_scaling ? var.agents_max_count : null
-    enable_node_public_ip  = var.enable_node_public_ip
+    enable_auto_scaling    = var.auto_scaling_enabled
+    min_count              = var.auto_scaling_enabled ? var.agents_min_count : null
+    max_count              = var.auto_scaling_enabled ? var.agents_max_count : null
+    enable_node_public_ip  = var.node_public_ip_enabled
     zones                  = var.agents_availability_zones
     type                   = var.agents_type
     node_labels            = var.default_node_labels
-    enable_host_encryption = var.enable_host_encryption
+    enable_host_encryption = var.host_encryption_enabled
     tags = {
       "agent_pool_name" = var.default_agent_pool_name
     }
@@ -98,86 +98,10 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "managed_agent_pools"  {
-    count                  = var.managed_agent_pool_count
-    name                   = "pool${count.index}"
-    node_count             = var.default_agent_pool_count
-    vm_size                = var.managed_agent_pool_size
-    kubernetes_cluster_id   = azurerm_kubernetes_cluster.aks_cluster.id
-    os_disk_size_gb        = var.os_disk_size_gb
-    zones                  = var.agents_availability_zones
-    enable_auto_scaling    = var.enable_auto_scaling
-    min_count              = var.enable_auto_scaling ? var.agents_min_count : null
-    max_count              = var.enable_auto_scaling ? var.agents_max_count : null
-    enable_node_public_ip  = var.enable_node_public_ip
-    vnet_subnet_id         = var.subnet_id[0]
-    enable_host_encryption = var.enable_host_encryption
-  }
-
-
-resource "azurerm_kubernetes_cluster_node_pool" "node_pool_app"  {
-    count                 = var.create_managed_node_pool_app ? 1 : 0
-    name                  = var.managed_node_pool_app_name
-    node_count            = var.agents_count_app
-    vm_size               = var.managed_node_pool_app_size
-    vnet_subnet_id        = var.subnet_id[0]
-    enable_auto_scaling   = var.enable_auto_scaling_app
-    min_count             = var.enable_auto_scaling_app ? var.agents_min_count_app : null
-    max_count             = var.enable_auto_scaling_app ? var.agents_max_count_app : null
-    enable_node_public_ip = var.enable_node_public_ip
-    kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
-    zones                 = var.agents_availability_zones_app
-    node_labels           = var.node_labels_app
-    enable_host_encryption = var.enable_host_encryption
-    tags = {
-      "agent_pool_name" = var.managed_node_pool_app_name
-    }
-  }
-
-resource "azurerm_kubernetes_cluster_node_pool" "node_pool_monitor"  {
-    count                 = var.create_managed_node_pool_monitor ? 1 : 0
-    name                  = var.managed_node_pool_monitor_name
-    node_count            = var.agents_count_monitor
-    vm_size               = var.managed_node_pool_monitor_size
-    vnet_subnet_id        = var.subnet_id[0]
-    enable_auto_scaling   = var.enable_auto_scaling_monitor
-    min_count             = var.enable_auto_scaling_monitor ? var.agents_min_count_monitor : null
-    max_count             = var.enable_auto_scaling_monitor ? var.agents_max_count_monitor : null
-    enable_node_public_ip = var.enable_node_public_ip
-    kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
-    zones                 = var.agents_availability_zones_monitor
-    max_pods              = var.agents_max_pods
-    node_labels           = var.node_labels_monitor
-    enable_host_encryption = var.enable_host_encryption
-    tags = {
-      "agent_pool_name" = var.managed_node_pool_monitor_name
-    }
-  }
-
-  resource "azurerm_kubernetes_cluster_node_pool" "node_pool_database"  {
-    count                 = var.create_managed_node_pool_database ? 1 : 0
-    name                  = var.managed_node_pool_database_name
-    node_count            = var.agents_count_database
-    vm_size               = var.managed_node_pool_monitor_size
-    vnet_subnet_id        = var.subnet_id[0]
-    enable_auto_scaling   = var.enable_auto_scaling_database
-    min_count             = var.enable_auto_scaling_database ? var.agents_min_count_database : null
-    max_count             = var.enable_auto_scaling_database ? var.agents_max_count_database : null
-    enable_node_public_ip = var.enable_node_public_ip
-    kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
-    zones                 = var.agents_availability_zones_database
-    max_pods              = var.agents_max_pods
-    node_labels           = var.node_labels_database
-    enable_host_encryption = var.enable_host_encryption
-    tags = {
-      "agent_pool_name" = var.managed_node_pool_database_name
-    }
-  }
-
 resource "null_resource" "open_service_mesh_addon" {
-  count                 = var.enable_open_service_mesh ? 1 : 0
+  count                 = var.open_service_mesh_enabled ? 1 : 0
   provisioner "local-exec" {
-    command = var.enable_open_service_mesh ? "az aks enable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" : "az aks disable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" 
+    command = var.open_service_mesh_enabled ? "az aks enable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" : "az aks disable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" 
   }
 }
 
@@ -195,7 +119,7 @@ resource "azurerm_log_analytics_workspace" "logs" {
 }
 
 resource "azurerm_log_analytics_solution" "logs" {
-  count                 = var.enable_log_analytics_solution ? 1 : 0
+  count                 = var.log_analytics_solution_enabled ? 1 : 0
   solution_name         = "ContainerInsights"
   location              = var.resource_group_location
   resource_group_name   = var.create_resource_group == false ? var.existing_resource_group_name : module.resource-group[0].resource_group_name
@@ -217,7 +141,7 @@ resource "azurerm_log_analytics_solution" "logs" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "control_plane" {
-  count                      = var.enable_control_plane_logs_scrape ? 1 : 0
+  count                      = var.control_plane_logs_scrape_enabled ? 1 : 0
   name                       = var.control_plane_monitor_name
   target_resource_id         = azurerm_kubernetes_cluster.aks_cluster.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id

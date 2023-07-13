@@ -1,47 +1,48 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_azure"></a> [azurerm](#requirement\_azure) | >= 3.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.0.2 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.0.2 |
+No requirements.
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azure"></a> [azure](#provider\_azure) | >= 3.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.11.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aks_cluster"></a> [aks_cluster](#module\_aks_cluster) | [squareops/aks/azure](https://github.com/sq-ia/terraform-azure-aks/tree/release/v1) | 1.0 |
-| <a name="module_vnet"></a> [vnet](#module\_vnet) | [squareops/vnet/azure](https://github.com/sq-ia/terraform-azure-vnet/tree/release/v1) | 1.0 |
+| <a name="module_aks_cluster"></a> [aks\_cluster](#module\_aks\_cluster) | git::https://github.com/squareops/terraform-azure-aks.git | release/v1 |
+| <a name="module_aks_managed_node_pool"></a> [aks\_managed\_node\_pool](#module\_aks\_managed\_node\_pool) | git::https://github.com/squareops/terraform-azure-aks.git//modules/managed_node_pools | release/v1 |
+| <a name="module_vnet"></a> [vnet](#module\_vnet) | git::https://github.com/squareops/terraform-azure-vnet.git | release/v1 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [azurerm_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
-| [azurerm_user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/2.62.1/docs/resources/user_assigned_identity) | resource |
+| [azurerm_resource_group.terraform_infra](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azurerm_user_assigned_identity.identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
+| [azurerm_key_vault_secret.ssh_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret) | data source |
+
+## Inputs
+
+No inputs.
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_name"></a> [name](#output_name) | Common Name for namming resource groups, vnet, aks, aks node pools etc|
-| <a name="output_environment"></a> [environment](#output_environment) | Environment Name for specifiying environment tagging resource groups, vnet, aks, aks node pools etc|
-| <a name="output_cluster_name"></a> [cluster_name](#output_cluster_name) | Azure Kubernetes Cluster Name |
-| <a name="output_default_ng_rg_name"></a> [default_ng_rg_name](#output_default_ng_rg_name) | Default Node Group Resource Group Name |
-| <a name="output_resource_group_name"></a> [resource_group_name](#output_resource_group_name) | Resource Group Name |
-| <a name="output_resource_group_location"></a> [resource_group_location](#output_resource_group_location) | Resource Group Name Location |
-| <a name="output_vnet_id"></a> [vnet_id](#output_vnet_id) | ID of the Vnet |
-| <a name="output_vnet_name"></a> [vnet_name](#output_vnet_name) | The Name of the newly created vNet |
-| <a name="output_vnet_subnets_name_id"></a> [vnet_subnets_name_id](#output_vnet_subnets_name_id) | Can be queried subnet-id by subnet name by using `lookup(module.vnet.vnet_subnets_name_id, subnet1)` |
-| <a name="output_user_assigned_identity_id"></a> [user_assigned_identity_id](#output_user_assigned_identity_id) | User assigned identity ID for CNI |
+| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Kubernetes Cluster Name |
+| <a name="output_default_ng_rg_name"></a> [default\_ng\_rg\_name](#output\_default\_ng\_rg\_name) | Default Node Group Resource Group Name |
+| <a name="output_environment"></a> [environment](#output\_environment) | Environment Name |
+| <a name="output_name"></a> [name](#output\_name) | Common Name |
+| <a name="output_resource_group_location"></a> [resource\_group\_location](#output\_resource\_group\_location) | Resource Group Name Location |
+| <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Resource Group Name |
+| <a name="output_user_assigned_identity_id"></a> [user\_assigned\_identity\_id](#output\_user\_assigned\_identity\_id) | user assigned identity ID for CNI |
+| <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | ID of the Vnet |
+| <a name="output_vnet_name"></a> [vnet\_name](#output\_vnet\_name) | The Name of the newly created vNet |
+| <a name="output_vnet_subnets_name_id"></a> [vnet\_subnets\_name\_id](#output\_vnet\_subnets\_name\_id) | Can be queried subnet-id by subnet name by using lookup(module.vnet.vnet\_subnets\_name\_id, subnet1) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contribution & Issue Reporting
