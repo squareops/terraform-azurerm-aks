@@ -53,7 +53,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "git::https://github.com/squareops/terraform-azure-aks.git?ref=main"
+  source     = "squareops/aks/azurerm"
 
   name                               = "aks-cluster"
   environment                        = "prod"
@@ -98,7 +98,7 @@ module "aks_cluster" {
 
 module "aks_managed_node_pool" {
   depends_on = [module.aks_cluster]
-  source     = "git::https://github.com/squareops/terraform-azure-aks.git//modules/managed_node_pools?ref=main"
+  source     = "squareops/aks/azurerm//modules/managed_node_pools"
 
   resource_group_name   = "AKS-resource-group"
   orchestrator_version  = "1.26.3"
