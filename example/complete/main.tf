@@ -15,7 +15,7 @@ resource "azurerm_resource_group" "terraform_infra" {
 
 module "vnet" {
   depends_on = [azurerm_resource_group.terraform_infra]
-  source     = "git::https://github.com/squareops/terraform-azure-vnet.git?ref=main"
+  source     = "squareops/vnet/azurerm"
 
   name                         = local.name
   address_space                = local.address_space
@@ -49,7 +49,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 module "aks_cluster" {
   depends_on = [module.vnet, azurerm_user_assigned_identity.identity]
-  source     = "git::https://github.com/squareops/terraform-azure-aks.git?ref=main"
+  source     = "squareops/aks/azurerm"
 
   name                              = format("%s-aks", local.name)
   environment                       = local.environment
@@ -94,7 +94,7 @@ module "aks_cluster" {
 
 module "aks_managed_node_pool" {
   depends_on = [module.aks_cluster]
-  source     = "git::https://github.com/squareops/terraform-azure-aks.git//modules/managed_node_pools?ref=main"
+  source     = "squareops/aks/azurerm//modules/managed_node_pools"
 
   resource_group_name   = azurerm_resource_group.terraform_infra.name
   orchestrator_version  = local.k8s_version
@@ -114,7 +114,7 @@ module "aks_managed_node_pool" {
       enable_node_public_ip    = false # if set to true node_public_ip_prefix_id is required
       node_public_ip_prefix_id = ""
       node_labels              = { App-service = "true" }
-      node_taints              = ["workload=example:NoSchedule"]
+      node_taints              = [""]
       host_encryption_enabled  = false
       max_pods                 = 30
       agents_tags              = local.additional_tags
