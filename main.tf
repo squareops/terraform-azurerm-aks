@@ -46,8 +46,8 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   identity {
-    type           = "UserAssigned"
-    identity_ids   = [var.user_assigned_identity_id]
+    type         = "UserAssigned"
+    identity_ids = [var.user_assigned_identity_id]
   }
 
   default_node_pool {
@@ -83,7 +83,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   linux_profile {
     admin_username = var.admin_username
     ssh_key {
-        key_data = var.public_ssh_key
+      key_data = var.public_ssh_key
     }
   }
 
@@ -99,9 +99,9 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 }
 
 resource "null_resource" "open_service_mesh_addon" {
-  count                 = var.open_service_mesh_enabled ? 1 : 0
+  count = var.open_service_mesh_enabled ? 1 : 0
   provisioner "local-exec" {
-    command = var.open_service_mesh_enabled ? "az aks enable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" : "az aks disable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" 
+    command = var.open_service_mesh_enabled ? "az aks enable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh" : "az aks disable-addons --resource-group ${azurerm_kubernetes_cluster.aks_cluster.resource_group_name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --addons open-service-mesh"
   }
 }
 

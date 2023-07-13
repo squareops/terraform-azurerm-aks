@@ -10,12 +10,12 @@ output "environment" {
 
 output "cluster_name" {
   description = "Kubernetes Cluster Name"
-  value       = "${module.aks_cluster.cluster_name}"
+  value       = module.aks_cluster.cluster_name
 }
 
 output "default_ng_rg_name" {
   description = "Default Node Group Resource Group Name"
-  value       = "${module.aks_cluster.default_ng_rg_name}"
+  value       = module.aks_cluster.default_ng_rg_name
 }
 
 output "resource_group_name" {
@@ -29,7 +29,7 @@ output "resource_group_location" {
 
 output "vnet_id" {
   description = "ID of the Vnet"
-  value = module.vnet.vnet_id
+  value       = module.vnet.vnet_id
 }
 
 output "vnet_name" {
@@ -44,5 +44,5 @@ output "vnet_subnets_name_id" {
 
 output "user_assigned_identity_id" {
   description = "user assigned identity ID for CNI"
-  value       =  azurerm_user_assigned_identity.identity.id
+  value       = azurerm_user_assigned_identity.identity.id
 }
