@@ -1,3 +1,14 @@
+# Azure AKS Terraform module
+![squareops_avatar]
+
+[squareops_avatar]: https://squareops.com/wp-content/uploads/2022/12/squareops-logo.png
+
+### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
+<br>
+This module simplifies the deployment of AKS clusters, allowing users to quickly create and manage a production-grade Kubernetes cluster on Azure. The module is highly configurable, allowing users to customize various aspects of the AKS cluster, such as the Kubernetes version, worker node instance type, and number of worker nodes. Additionally, the module provides a set of outputs that can be used to configure other resources, such as the Kubernetes config file and the Azure CLI.
+
+This module is ideal for users who want to quickly deploy an AKS cluster on Azure without the need for manual setup and configuration. It is also suitable for users who want to adopt best practices for security and scalability in their AKS deployments.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
