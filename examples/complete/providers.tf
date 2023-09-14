@@ -8,14 +8,6 @@ provider "azurerm" {
   }
 }
 
-locals {
-  additional_tags = {
-    Owner      = "Organization_name"
-    Expires    = "Never"
-    Department = "Engineering"
-  }
-}
-
 # Kubernetes provider
 
 provider "kubernetes" {

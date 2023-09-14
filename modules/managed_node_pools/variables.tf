@@ -14,8 +14,8 @@ variable "location" {
 }
 
 variable "kubernetes_cluster_id" {
-  type     = string
-  default  = ""
+  type    = string
+  default = ""
 }
 
 variable "vnet_subnet_id" {
