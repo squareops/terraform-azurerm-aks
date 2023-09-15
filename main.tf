@@ -149,81 +149,45 @@ resource "azurerm_monitor_diagnostic_setting" "control_plane" {
   log {
     category = "cloud-controller-manager"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "cluster-autoscaler"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "csi-azuredisk-controller"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "csi-azurefile-controller"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "csi-snapshot-controller"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "kube-apiserver"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "kube-controller-manager"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   log {
     category = "kube-scheduler"
     enabled  = true
-    retention_policy {
-      enabled = true
-      days    = 7
-    }
   }
 
   metric {
     category = "AllMetrics"
     enabled  = false
-    retention_policy {
-      enabled = false
-      days    = 0
-    }
   }
 }
