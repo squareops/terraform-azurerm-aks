@@ -20,11 +20,11 @@ Private key is saved to "/home/user/.ssh/7777777777_9999999".
 Public key is saved to "/home/user/.ssh/7777777777_9999999.pub".
 ```
 2. Create Azure Key Vault using Azure CLI:
-```hcl
+```bash
 az keyvault create --name MyKeyVault --resource-group MyResourceGroup --location "East US"
 ```
 3. Set SSH public key in Key Vault using Azure CLI:
-```hcl
+```bash
 az keyvault secret set --vault-name "MyKeyVault" --name "mySSHKey" --file /home/user/.ssh/7777777777_9999999.pub
 ```
 4. Update the Key Vault name and ID in the Terraform data variables:
@@ -34,6 +34,11 @@ data "azurerm_key_vault_secret" "ssh_key" {
   name         = "mySSHKey"
   key_vault_id = "/subscriptions/{subscription-id}/resourceGroups/MyResourceGroup/providers/Microsoft.KeyVault/vaults/MyKeyVault"
 }
+```
+To get the value for `key_vault_id` use the following Azure CLI command:
+
+```bash
+az keyvault show --name "MyKeyVault" --query "id"
 ```
 
 ## Usage Example
